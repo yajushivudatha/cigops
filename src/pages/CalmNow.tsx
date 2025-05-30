@@ -1,13 +1,19 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RotateCcw } from 'lucide-react';
+import { Play, Pause, RotateCcw, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAICoach } from '@/hooks/useAICoach';
+import { useVoiceSupport } from '@/hooks/useVoiceSupport';
+import VoiceSetup from '@/components/VoiceSetup';
 
 const CalmNow = () => {
   const [isActive, setIsActive] = useState(false);
   const [breatheCount, setBreatheCount] = useState(0);
   const [sessionTime, setSessionTime] = useState(0);
   const { toast } = useToast();
+  const { triggerCrisisSupport, userContext } = useAICoach();
+  const { isConnected, isSupported, startVoiceSession, endVoiceSession } = useVoiceSupport();
 
   React.useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
@@ -41,6 +47,18 @@ const CalmNow = () => {
     }
   };
 
+  const handleVoiceCrisisSupport = async () => {
+    if (isConnected) {
+      endVoiceSession();
+      return;
+    }
+
+    const advice = await triggerCrisisSupport();
+    if (isSupported) {
+      await startVoiceSession(advice.message);
+    }
+  };
+
   const resetSession = () => {
     setIsActive(false);
     setBreatheCount(0);
@@ -67,8 +85,13 @@ const CalmNow = () => {
             Calm Your Mind 🧘‍♀️
           </h1>
           <p className="text-cyan-300 text-lg opacity-80">
-            You've resisted 3 cravings this week. Let's breathe together.
+            You've resisted {userContext.successfulResistances} cravings this week. Let's breathe together.
           </p>
+        </div>
+
+        {/* Voice Setup */}
+        <div className="mb-8">
+          <VoiceSetup />
         </div>
 
         {/* Main Breathing Circle */}
@@ -102,6 +125,24 @@ const CalmNow = () => {
             </Button>
           </div>
         </div>
+
+        {/* Crisis Voice Support Button */}
+        {isSupported && (
+          <div className="mb-8">
+            <Button
+              onClick={handleVoiceCrisisSupport}
+              variant="outline"
+              size="lg"
+              className={`
+                glass-card border-red-400/40 hover:border-red-400/60 hover:bg-red-500/10
+                ${isConnected ? 'bg-red-500/20 animate-pulse' : ''}
+              `}
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              {isConnected ? 'End Voice Session' : 'Crisis Voice Support'}
+            </Button>
+          </div>
+        )}
 
         {/* Breathing Instructions */}
         {isActive && (
