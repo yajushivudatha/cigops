@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw } from 'lucide-react';
@@ -11,13 +10,17 @@ const CalmNow = () => {
   const { toast } = useToast();
 
   React.useEffect(() => {
-    let interval: number;
+    let interval: NodeJS.Timeout | undefined;
     if (isActive) {
       interval = setInterval(() => {
         setSessionTime(time => time + 1);
       }, 1000);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [isActive]);
 
   const handleCalmNow = () => {
