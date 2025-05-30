@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Upload, FileText, Zap, AlertCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const PDFAnalyzer = () => {
   const [isDragging, setIsDragging] = useState(false);
-  const [analyzedReport, setAnalyzedReport] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analyzedReport, setAnalyzedReport] = useState<any>(null);
+  const { toast } = useToast();
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
   };
@@ -17,9 +20,41 @@ const PDFAnalyzer = () => {
     setIsDragging(false);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
+
+  const handleFileUpload = (file: File) => {
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a PDF file.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Uploading file:', file.name);
+    setIsAnalyzing(true);
+    
+    toast({
+      title: "File uploaded successfully",
+      description: `Analyzing ${file.name}...`
+    });
+
     // Simulate analysis
     setTimeout(() => {
       setAnalyzedReport({
@@ -28,7 +63,29 @@ const PDFAnalyzer = () => {
         recommendation: 'Significant improvement expected within 3 months of quitting',
         severity: 'Moderate'
       });
-    }, 2000);
+      setIsAnalyzing(false);
+      
+      toast({
+        title: "Analysis complete",
+        description: "Your medical report has been analyzed."
+      });
+    }, 3000);
+  };
+
+  const handleChooseFile = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf';
+    input.onchange = (e) => handleFileInput(e as any);
+    input.click();
+  };
+
+  const handleSaveToTimeline = () => {
+    console.log('Saving to health timeline...');
+    toast({
+      title: "Saved to timeline",
+      description: "Report has been added to your health timeline."
+    });
   };
 
   return (
@@ -56,7 +113,7 @@ const PDFAnalyzer = () => {
               {/* Drag & Drop Zone */}
               <div
                 className={`
-                  border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300
+                  border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 cursor-pointer
                   ${isDragging 
                     ? 'border-cyan-400 bg-cyan-500/10' 
                     : 'border-gray-600 hover:border-cyan-500 hover:bg-cyan-500/5'
@@ -65,6 +122,7 @@ const PDFAnalyzer = () => {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
+                onClick={handleChooseFile}
               >
                 <div className="mb-4">
                   <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -76,7 +134,13 @@ const PDFAnalyzer = () => {
                   </p>
                 </div>
 
-                <Button className="bg-cyan-500 hover:bg-cyan-600">
+                <Button 
+                  className="bg-cyan-500 hover:bg-cyan-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleChooseFile();
+                  }}
+                >
                   <Upload className="w-4 h-4 mr-2" />
                   Choose File
                 </Button>
@@ -108,7 +172,17 @@ const PDFAnalyzer = () => {
                 AI Analysis Results
               </h3>
 
-              {analyzedReport ? (
+              {isAnalyzing ? (
+                <div className="text-center py-12">
+                  <div className="w-24 h-24 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
+                    <Zap className="w-12 h-12 text-cyan-400 animate-pulse" />
+                  </div>
+                  <h4 className="text-xl text-white mb-2">Analyzing...</h4>
+                  <p className="text-gray-400">
+                    AI is processing your medical report
+                  </p>
+                </div>
+              ) : analyzedReport ? (
                 <div className="space-y-6">
                   {/* Report Type */}
                   <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
@@ -146,7 +220,10 @@ const PDFAnalyzer = () => {
                   </div>
 
                   {/* Action Button */}
-                  <Button className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500"
+                    onClick={handleSaveToTimeline}
+                  >
                     Save to Health Timeline
                   </Button>
                 </div>

@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navigation from './Navigation';
+import GreetingScreen from './GreetingScreen';
 
 const Layout = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [userName] = useState("Alex");
+  const [showGreeting, setShowGreeting] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
@@ -20,7 +22,15 @@ const Layout = () => {
     return "Good evening";
   };
 
+  const handleGreetingTransition = () => {
+    setShowGreeting(false);
+  };
+
   const isHomePage = location.pathname === '/';
+
+  if (showGreeting && isHomePage) {
+    return <GreetingScreen onTransition={handleGreetingTransition} />;
+  }
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">

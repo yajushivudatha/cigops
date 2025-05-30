@@ -2,22 +2,57 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const CalmNow = () => {
   const [isActive, setIsActive] = useState(false);
   const [breatheCount, setBreatheCount] = useState(0);
+  const [sessionTime, setSessionTime] = useState(0);
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    let interval: number;
+    if (isActive) {
+      interval = setInterval(() => {
+        setSessionTime(time => time + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isActive]);
 
   const handleCalmNow = () => {
     setIsActive(!isActive);
     if (!isActive) {
       setBreatheCount(breatheCount + 1);
+      console.log('Calm Now session started!');
+      toast({
+        title: "Session started",
+        description: "Focus on your breathing. You've got this!"
+      });
+    } else {
+      console.log('Calm Now session paused!');
+      toast({
+        title: "Session paused",
+        description: `Great job! You breathed mindfully for ${Math.floor(sessionTime / 60)}:${(sessionTime % 60).toString().padStart(2, '0')}`
+      });
     }
-    console.log('Calm Now activated!');
   };
 
   const resetSession = () => {
     setIsActive(false);
     setBreatheCount(0);
+    setSessionTime(0);
+    console.log('Session reset');
+    toast({
+      title: "Session reset",
+      description: "Ready for a fresh start!"
+    });
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -73,8 +108,13 @@ const CalmNow = () => {
               <p className="text-cyan-300 text-sm opacity-80 mb-4">
                 Inhale as it expands, exhale as it contracts
               </p>
-              <div className="text-2xl text-cyan-400 font-bold">
-                Session {breatheCount}
+              <div className="flex justify-between items-center">
+                <div className="text-2xl text-cyan-400 font-bold">
+                  Session {breatheCount}
+                </div>
+                <div className="text-lg text-white">
+                  {formatTime(sessionTime)}
+                </div>
               </div>
             </div>
           </div>
