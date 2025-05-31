@@ -91,7 +91,7 @@ export const useVoiceSupport = () => {
 
       if (response.ok) {
         const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioUrl);
+        const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         
         audio.play();
