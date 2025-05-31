@@ -1,236 +1,157 @@
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Volume2 } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 import { useVoiceSupport } from '@/hooks/useVoiceSupport';
-import { useToast } from '@/hooks/use-toast';
 
 const CalmNow = () => {
-  const [isBreathing, setIsBreathing] = useState(false);
-  const [breathCount, setBreathCount] = useState(0);
-  const [currentExercise, setCurrentExercise] = useState('normal');
-  const { isConnected, startVoiceSession, endVoiceSession } = useVoiceSupport();
-  const { toast } = useToast();
+  const [isActive, setIsActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [phase, setPhase] = useState('');
+  const [technique, setTechnique] = useState('478');
+  const { speak } = useVoiceSupport();
 
-  const handleStartBreathing = () => {
-    setIsBreathing(true);
-    setBreathCount(0);
-    startVoiceSession("I notice you need some calm right now. Let's do some breathing exercises together.");
-  };
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
 
-  const handleStopBreathing = () => {
-    setIsBreathing(false);
-    if (isConnected) {
-      endVoiceSession();
-    }
-  };
+    if (isActive && timeLeft > 0) {
+      intervalId = setInterval(() => {
+        setTimeLeft(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (isActive && timeLeft === 0) {
+      clearInterval(intervalId);
 
-  const start478Breathing = () => {
-    setCurrentExercise('4-7-8');
-    setIsBreathing(true);
-    setBreathCount(0);
-    startVoiceSession("Let's try the 4-7-8 breathing technique. Inhale for 4, hold for 7, exhale for 8.");
-    toast({
-      title: "4-7-8 Breathing Started",
-      description: "Inhale for 4, hold for 7, exhale for 8 seconds"
-    });
-  };
-
-  const startBoxBreathing = () => {
-    setCurrentExercise('box');
-    setIsBreathing(true);
-    setBreathCount(0);
-    startVoiceSession("Let's practice box breathing. 4 counts in, hold 4, out 4, hold 4.");
-    toast({
-      title: "Box Breathing Started",
-      description: "4 counts in, hold 4, out 4, hold 4"
-    });
-  };
-
-  const startQuickReset = () => {
-    setCurrentExercise('quick');
-    setIsBreathing(true);
-    setBreathCount(0);
-    startVoiceSession("Let's do a quick reset with 3 deep breaths to center yourself.");
-    toast({
-      title: "Quick Reset Started",
-      description: "3 deep breaths to center yourself"
-    });
-  };
-
-  React.useEffect(() => {
-    if (isBreathing) {
-      const interval = setInterval(() => {
-        setBreathCount(prev => prev + 1);
-        if (currentExercise === 'quick' && breathCount >= 6) {
-          setIsBreathing(false);
-          if (isConnected) {
-            endVoiceSession();
-          }
+      if (technique === '478') {
+        if (phase === 'Inhale') {
+          setTimeLeft(7);
+          setPhase('Hold');
+          speak("Hold your breath.");
+        } else if (phase === 'Hold') {
+          setTimeLeft(8);
+          setPhase('Exhale');
+          speak("Exhale slowly.");
+        } else if (phase === 'Exhale') {
+          setTimeLeft(4);
+          setPhase('Inhale');
+          speak("Inhale deeply.");
         }
-      }, 4000);
-
-      return () => clearInterval(interval);
+      } else if (technique === 'box') {
+        if (phase === 'Inhale') {
+          setTimeLeft(4);
+          setPhase('Hold1');
+          speak("Hold your breath.");
+        } else if (phase === 'Hold1') {
+          setTimeLeft(4);
+          setPhase('Exhale');
+          speak("Exhale slowly.");
+        } else if (phase === 'Exhale') {
+          setTimeLeft(4);
+          setPhase('Hold2');
+          speak("Hold your breath.");
+        } else if (phase === 'Hold2') {
+          setTimeLeft(4);
+          setPhase('Inhale');
+          speak("Inhale deeply.");
+        }
+      }
     }
-  }, [isBreathing, breathCount, currentExercise, isConnected, endVoiceSession]);
 
-  const getBreathingText = () => {
-    switch (currentExercise) {
-      case '4-7-8':
-        const cycle478 = breathCount % 3;
-        return cycle478 === 0 ? 'Inhale (4s)' : cycle478 === 1 ? 'Hold (7s)' : 'Exhale (8s)';
-      case 'box':
-        const cycleBox = breathCount % 4;
-        return cycleBox === 0 ? 'Inhale (4s)' : cycleBox === 1 ? 'Hold (4s)' : cycleBox === 2 ? 'Exhale (4s)' : 'Hold (4s)';
-      case 'quick':
-        return breathCount % 2 === 0 ? 'Deep Inhale' : 'Deep Exhale';
-      default:
-        return breathCount % 2 === 0 ? 'Breathe In' : 'Breathe Out';
+    return () => clearInterval(intervalId);
+  }, [isActive, timeLeft, phase, technique, speak]);
+
+  const startBreathingExercise = (selectedTechnique: string) => {
+    setTechnique(selectedTechnique);
+    setIsActive(true);
+    speak("Let's begin your breathing exercise. Follow the guidance on screen.");
+    
+    if (selectedTechnique === '478') {
+      setTimeLeft(4);
+      setPhase('Inhale');
+    } else if (selectedTechnique === 'box') {
+      setTimeLeft(4);
+      setPhase('Inhale');
     }
+  };
+
+  const stopExercise = () => {
+    setIsActive(false);
+    setTimeLeft(0);
+    setPhase('');
+  };
+
+  const resetExercise = () => {
+    setIsActive(false);
+    setTimeLeft(0);
+    setPhase('');
   };
 
   return (
-    <div className="min-h-screen p-4 pt-20 bg-black">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl font-serif text-white mb-4 text-glow">
-            Calm Your Mind 🧘‍♀️
-          </h1>
-          <p className="text-cyan-300 text-lg opacity-80">
-            You've resisted 3 cravings this week. Let's breathe together.
-          </p>
-        </div>
-
-        {/* Main Breathing Exercise - Centered */}
-        <div className="flex justify-center mb-12">
-          <div className="relative">
-            {/* Breathing Animation Rings */}
-            <div className={`
-              absolute inset-0 w-80 h-80 rounded-full border-2 border-cyan-400/30 flex items-center justify-center
-              transition-all duration-4000 ease-in-out
-              ${isBreathing ? 'scale-110 border-cyan-400/60 animate-breathe' : 'scale-100'}
-            `}></div>
-            <div className={`
-              absolute inset-4 w-72 h-72 rounded-full border border-cyan-400/20 flex items-center justify-center
-              transition-all duration-4000 ease-in-out
-              ${isBreathing ? 'scale-110 border-cyan-400/40' : 'scale-100'}
-            `}></div>
-            
-            {/* Main Button */}
-            <Button
-              onClick={isBreathing ? handleStopBreathing : handleStartBreathing}
-              className={`
-                relative z-10 w-64 h-64 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 
-                hover:from-cyan-400 hover:to-blue-500 border-0 shadow-2xl transition-all duration-300
-                ${isBreathing ? 'animate-pulse-glow scale-110' : 'hover:scale-105'}
-              `}
-            >
-              <div className="flex flex-col items-center">
-                {isBreathing ? (
-                  <Pause className="w-12 h-12 mb-3" />
-                ) : (
-                  <Play className="w-12 h-12 mb-3" />
-                )}
-                <span className="text-lg font-semibold mb-2">
-                  {isBreathing ? 'Stop' : 'Begin'}
-                </span>
-                {isBreathing && (
-                  <div className="text-center">
-                    <p className="text-sm">{getBreathingText()}</p>
-                    <p className="text-xs opacity-80 mt-1">
-                      {currentExercise === 'quick' 
-                        ? `Breath ${Math.floor(breathCount / 2) + 1}/3`
-                        : `Breath ${Math.floor(breathCount / 2) + 1}`
-                      }
-                    </p>
-                  </div>
-                )}
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <div className="relative flex items-center justify-center">
+        {/* Breathing Circle */}
+        <div className={`
+          w-80 h-80 rounded-full border-4 border-cyan-400/50 flex items-center justify-center relative
+          ${isActive ? 'animate-breathe' : ''}
+        `}>
+          {/* Inner Content */}
+          <div className="text-center">
+            {!isActive ? (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-serif text-white text-glow">
+                  Choose Your Breathing
+                </h2>
+                <div className="space-y-3">
+                  <Button
+                    onClick={() => startBreathingExercise('478')}
+                    className="w-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
+                  >
+                    4-7-8 Breathing
+                  </Button>
+                  <Button
+                    onClick={() => startBreathingExercise('box')}
+                    className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50"
+                  >
+                    Box Breathing
+                  </Button>
+                </div>
               </div>
-            </Button>
-
-            {isConnected && (
-              <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 text-green-400">
-                <Volume2 className="w-5 h-5" />
-                <span className="text-sm">Voice guidance active</span>
+            ) : (
+              <div className="text-center">
+                <div className="text-4xl font-bold text-cyan-400 mb-2">
+                  {timeLeft}
+                </div>
+                <div className="text-xl text-white mb-4">
+                  {phase}
+                </div>
+                <div className="space-x-2">
+                  <Button
+                    onClick={stopExercise}
+                    size="sm"
+                    variant="outline"
+                    className="bg-red-500/20 border-red-500/50 text-red-300"
+                  >
+                    <Pause className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    onClick={resetExercise}
+                    size="sm"
+                    variant="outline"
+                    className="bg-gray-500/20 border-gray-500/50 text-gray-300"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Reset Button */}
-        {isBreathing && (
-          <div className="text-center mb-8">
-            <Button
-              onClick={() => {
-                setIsBreathing(false);
-                setCurrentExercise('normal');
-                if (isConnected) endVoiceSession();
-              }}
-              variant="outline"
-              className="border-gray-400 text-gray-400 hover:bg-gray-400 hover:text-black"
-            >
-              Reset
-            </Button>
-          </div>
-        )}
-
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="glass-card animate-slide-up">
-            <CardHeader>
-              <CardTitle className="text-white text-lg">4-7-8 Breathing</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-300 text-sm mb-4">
-                Inhale for 4, hold for 7, exhale for 8 seconds
-              </p>
-              <Button 
-                onClick={start478Breathing}
-                variant="outline" 
-                className="w-full border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black"
-              >
-                Try Now
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card animate-slide-up" style={{ animationDelay: '0.1s' }}>
-            <CardHeader>
-              <CardTitle className="text-white text-lg">Box Breathing</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-300 text-sm mb-4">
-                4 counts in, hold 4, out 4, hold 4
-              </p>
-              <Button 
-                onClick={startBoxBreathing}
-                variant="outline" 
-                className="w-full border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black"
-              >
-                Try Now
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="glass-card animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <CardHeader>
-              <CardTitle className="text-white text-lg">Quick Reset</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-300 text-sm mb-4">
-                3 deep breaths to center yourself
-              </p>
-              <Button 
-                onClick={startQuickReset}
-                variant="outline" 
-                className="w-full border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black"
-              >
-                Try Now
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Outer breathing rings */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-96 h-96 border border-cyan-400/20 rounded-full animate-breathe" style={{ animationDelay: '0.5s' }}></div>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-[28rem] h-[28rem] border border-cyan-400/10 rounded-full animate-breathe" style={{ animationDelay: '1s' }}></div>
         </div>
       </div>
     </div>
