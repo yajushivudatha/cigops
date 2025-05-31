@@ -1,187 +1,163 @@
 
 import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RotateCcw, Phone } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { useAICoach } from '@/hooks/useAICoach';
+import { Play, Pause, Volume2 } from 'lucide-react';
 import { useVoiceSupport } from '@/hooks/useVoiceSupport';
-import VoiceSetup from '@/components/VoiceSetup';
 
 const CalmNow = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [breatheCount, setBreatheCount] = useState(0);
-  const [sessionTime, setSessionTime] = useState(0);
-  const { toast } = useToast();
-  const { triggerCrisisSupport, userContext } = useAICoach();
-  const { isConnected, isSupported, startVoiceSession, endVoiceSession } = useVoiceSupport();
+  const [isBreathing, setIsBreathing] = useState(false);
+  const [breathCount, setBreathCount] = useState(0);
+  const { isConnected, startVoiceSession, endVoiceSession } = useVoiceSupport();
 
-  React.useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-    if (isActive) {
-      interval = setInterval(() => {
-        setSessionTime(time => time + 1);
-      }, 1000);
-    }
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isActive]);
-
-  const handleCalmNow = () => {
-    setIsActive(!isActive);
-    if (!isActive) {
-      setBreatheCount(breatheCount + 1);
-      console.log('Calm Now session started!');
-      toast({
-        title: "Session started",
-        description: "Focus on your breathing. You've got this!"
-      });
-    } else {
-      console.log('Calm Now session paused!');
-      toast({
-        title: "Session paused",
-        description: `Great job! You breathed mindfully for ${Math.floor(sessionTime / 60)}:${(sessionTime % 60).toString().padStart(2, '0')}`
-      });
-    }
+  const handleStartBreathing = () => {
+    setIsBreathing(true);
+    setBreathCount(0);
+    // Start voice guidance
+    startVoiceSession("I notice you need some calm right now. Let's do some breathing exercises together.");
   };
 
-  const handleVoiceCrisisSupport = async () => {
+  const handleStopBreathing = () => {
+    setIsBreathing(false);
     if (isConnected) {
       endVoiceSession();
-      return;
-    }
-
-    const advice = await triggerCrisisSupport();
-    if (isSupported) {
-      await startVoiceSession(advice.message);
     }
   };
 
-  const resetSession = () => {
-    setIsActive(false);
-    setBreatheCount(0);
-    setSessionTime(0);
-    console.log('Session reset');
-    toast({
-      title: "Session reset",
-      description: "Ready for a fresh start!"
-    });
-  };
+  React.useEffect(() => {
+    if (isBreathing) {
+      const interval = setInterval(() => {
+        setBreathCount(prev => prev + 1);
+      }, 4000); // 4 seconds per breath cycle
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+      return () => clearInterval(interval);
+    }
+  }, [isBreathing]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="text-center max-w-2xl mx-auto">
+    <div className="min-h-screen p-4 pt-20">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-12 animate-fade-in">
+        <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-4xl font-serif text-white mb-4 text-glow">
-            Calm Your Mind 🧘‍♀️
+            Calm Now 🧘‍♀️
           </h1>
           <p className="text-cyan-300 text-lg opacity-80">
-            You've resisted {userContext.successfulResistances} cravings this week. Let's breathe together.
+            Take a moment to breathe and center yourself
           </p>
         </div>
 
-        {/* Voice Setup */}
-        <div className="mb-8">
-          <VoiceSetup />
-        </div>
-
-        {/* Main Breathing Circle */}
-        <div className="relative mb-12">
-          {/* Outer breathing rings */}
-          <div className={`absolute inset-0 w-80 h-80 mx-auto rounded-full border-2 border-cyan-400/30 ${isActive ? 'animate-breathe' : ''}`}></div>
-          <div className={`absolute inset-4 w-72 h-72 mx-auto rounded-full border border-cyan-400/20 ${isActive ? 'animate-breathe' : ''}`} style={{ animationDelay: '0.5s' }}></div>
-          <div className={`absolute inset-8 w-64 h-64 mx-auto rounded-full border border-cyan-400/10 ${isActive ? 'animate-breathe' : ''}`} style={{ animationDelay: '1s' }}></div>
-          
-          {/* Center button */}
-          <div className="relative z-10 flex items-center justify-center h-80">
-            <Button
-              onClick={handleCalmNow}
-              size="lg"
-              className={`
-                w-40 h-40 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 
-                hover:from-cyan-400 hover:to-blue-500 border-0 shadow-2xl transition-all duration-300
-                ${isActive ? 'animate-pulse-glow scale-110' : 'hover:scale-105'}
-              `}
-            >
-              <div className="flex flex-col items-center">
-                {isActive ? (
-                  <Pause className="w-12 h-12 mb-2" />
-                ) : (
-                  <Play className="w-12 h-12 mb-2" />
-                )}
-                <span className="text-lg font-semibold">
-                  {isActive ? 'Pause' : 'Begin'}
-                </span>
+        {/* Main Breathing Exercise */}
+        <Card className="glass-card mb-8 animate-scale-in">
+          <CardContent className="p-12">
+            <div className="text-center">
+              {/* Breathing Circle */}
+              <div className="relative mx-auto mb-8">
+                <div className={`
+                  w-64 h-64 rounded-full border-4 border-cyan-400/30 flex items-center justify-center
+                  transition-all duration-4000 ease-in-out
+                  ${isBreathing ? 'scale-110 border-cyan-400/60 animate-breathe' : 'scale-100'}
+                `}>
+                  <div className={`
+                    w-48 h-48 rounded-full border-2 border-cyan-400/20 flex items-center justify-center
+                    transition-all duration-4000 ease-in-out
+                    ${isBreathing ? 'scale-110 border-cyan-400/40' : 'scale-100'}
+                  `}>
+                    <div className="text-center">
+                      <div className="text-6xl mb-2">🫁</div>
+                      <p className="text-cyan-300 text-lg">
+                        {isBreathing ? (breathCount % 2 === 0 ? 'Breathe In' : 'Breathe Out') : 'Ready?'}
+                      </p>
+                      {isBreathing && (
+                        <p className="text-gray-400 text-sm mt-2">
+                          Breath {Math.floor(breathCount / 2) + 1}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </Button>
-          </div>
-        </div>
 
-        {/* Crisis Voice Support Button */}
-        {isSupported && (
-          <div className="mb-8">
-            <Button
-              onClick={handleVoiceCrisisSupport}
-              variant="outline"
-              size="lg"
-              className={`
-                glass-card border-red-400/40 hover:border-red-400/60 hover:bg-red-500/10
-                ${isConnected ? 'bg-red-500/20 animate-pulse' : ''}
-              `}
-            >
-              <Phone className="w-5 h-5 mr-2" />
-              {isConnected ? 'End Voice Session' : 'Crisis Voice Support'}
-            </Button>
-          </div>
-        )}
+              {/* Controls */}
+              <div className="space-y-4">
+                <Button
+                  onClick={isBreathing ? handleStopBreathing : handleStartBreathing}
+                  size="lg"
+                  className={`
+                    w-48 h-16 text-lg font-semibold rounded-full transition-all duration-300
+                    ${isBreathing 
+                      ? 'bg-red-500 hover:bg-red-600 text-white' 
+                      : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white'
+                    }
+                  `}
+                >
+                  {isBreathing ? (
+                    <>
+                      <Pause className="w-6 h-6 mr-2" />
+                      Stop Session
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-6 h-6 mr-2" />
+                      Start Breathing
+                    </>
+                  )}
+                </Button>
 
-        {/* Breathing Instructions */}
-        {isActive && (
-          <div className="mb-8 animate-fade-in">
-            <div className="glass-card p-6 rounded-xl">
-              <h3 className="text-xl text-white mb-3">Breathe with the circle</h3>
-              <p className="text-cyan-300 text-sm opacity-80 mb-4">
-                Inhale as it expands, exhale as it contracts
-              </p>
-              <div className="flex justify-between items-center">
-                <div className="text-2xl text-cyan-400 font-bold">
-                  Session {breatheCount}
-                </div>
-                <div className="text-lg text-white">
-                  {formatTime(sessionTime)}
-                </div>
+                {isConnected && (
+                  <div className="flex items-center justify-center space-x-2 text-green-400">
+                    <Volume2 className="w-5 h-5" />
+                    <span className="text-sm">Voice guidance active</span>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        )}
+          </CardContent>
+        </Card>
 
-        {/* Session Controls */}
-        <div className="flex justify-center space-x-4">
-          <Button
-            onClick={resetSession}
-            variant="outline"
-            className="glass-card border-white/20 hover:border-cyan-400/50 hover:bg-cyan-500/10"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
-          </Button>
-        </div>
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card className="glass-card animate-slide-up">
+            <CardHeader>
+              <CardTitle className="text-white text-lg">4-7-8 Breathing</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-300 text-sm mb-4">
+                Inhale for 4, hold for 7, exhale for 8 seconds
+              </p>
+              <Button variant="outline" className="w-full border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black">
+                Try Now
+              </Button>
+            </CardContent>
+          </Card>
 
-        {/* Motivational Quote */}
-        <div className="mt-12 glass-card p-6 rounded-xl animate-scale-in">
-          <blockquote className="text-lg text-white font-serif italic mb-3">
-            "Every breath is a new beginning. You have the strength within you."
-          </blockquote>
-          <cite className="text-cyan-300 text-sm opacity-80">— Your Recovery Journey</cite>
+          <Card className="glass-card animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <CardHeader>
+              <CardTitle className="text-white text-lg">Box Breathing</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-300 text-sm mb-4">
+                4 counts in, hold 4, out 4, hold 4
+              </p>
+              <Button variant="outline" className="w-full border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black">
+                Try Now
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <CardHeader>
+              <CardTitle className="text-white text-lg">Quick Reset</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-300 text-sm mb-4">
+                3 deep breaths to center yourself
+              </p>
+              <Button variant="outline" className="w-full border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black">
+                Try Now
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

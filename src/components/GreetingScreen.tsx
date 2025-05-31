@@ -15,7 +15,7 @@ const GreetingScreen = ({ onTransition }: GreetingScreenProps) => {
   }, [onTransition]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center relative overflow-hidden transition-all duration-1000 ease-in-out">
+    <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden transition-all duration-1000 ease-in-out">
       {/* Breathing Bubbles Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 bg-cyan-500/20 rounded-full animate-breathe"></div>
@@ -38,7 +38,7 @@ const GreetingScreen = ({ onTransition }: GreetingScreenProps) => {
           <div className="w-64 h-64 border border-cyan-400/10 rounded-full animate-breathe" style={{ animationDelay: '1s' }}></div>
         </div>
         
-        {/* Greeting Text - Centered */}
+        {/* Greeting Text - No background, just text */}
         <div className="text-center animate-fade-in relative z-10">
           <h1 className="text-6xl font-serif text-white text-glow animate-pulse-glow">
             Good evening, Alex 💙

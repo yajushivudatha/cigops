@@ -9,39 +9,16 @@ interface VoiceSupportConfig {
 
 export const useVoiceSupport = () => {
   const [isConnected, setIsConnected] = useState(false);
-  const [isSupported, setIsSupported] = useState(false);
-  const [config, setConfig] = useState<VoiceSupportConfig | null>(null);
+  const [isSupported, setIsSupported] = useState(true); // Set to true since we have API key
+  const [config] = useState<VoiceSupportConfig>({
+    apiKey: 'sk_25f0209ce664221af67eb5ebf6ea445adcd5d2068d588a03',
+    voiceId: '2WM58lWaTXuuBkN1puHx'
+  });
   const { toast } = useToast();
 
   const initializeVoiceSupport = async (apiKey: string) => {
-    try {
-      // Check if ElevenLabs API key is valid
-      const response = await fetch('https://api.elevenlabs.io/v1/voices', {
-        headers: {
-          'xi-api-key': apiKey
-        }
-      });
-
-      if (response.ok) {
-        setConfig({
-          apiKey,
-          voiceId: '2WM58lWaTXuuBkN1puHx' // Your specific voice ID
-        });
-        setIsSupported(true);
-        toast({
-          title: "Voice Support Ready",
-          description: "AI voice coach is now available for crisis support"
-        });
-      } else {
-        throw new Error('Invalid API key');
-      }
-    } catch (error) {
-      toast({
-        title: "Voice Support Error", 
-        description: "Unable to initialize voice support. Please check your API key.",
-        variant: "destructive"
-      });
-    }
+    // Already initialized with your API key
+    return Promise.resolve();
   };
 
   const startVoiceSession = async (contextMessage: string) => {
@@ -60,7 +37,7 @@ export const useVoiceSupport = () => {
       // Generate contextual voice message
       const voiceText = `Hello Alex. I'm here to help you through this moment. ${contextMessage} Let's take this one breath at a time. You've got this.`;
       
-      const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + config.voiceId, {
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${config.voiceId}`, {
         method: 'POST',
         headers: {
           'Accept': 'audio/mpeg',
@@ -93,6 +70,8 @@ export const useVoiceSupport = () => {
           setIsConnected(false);
           URL.revokeObjectURL(audioUrl);
         };
+      } else {
+        throw new Error('Failed to generate voice');
       }
     } catch (error) {
       setIsConnected(false);

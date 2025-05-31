@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Clock, Star } from 'lucide-react';
+import WatsonChat from '@/components/WatsonChat';
 
 const ClinicalSupport = () => {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
 
-  // Mock clinic data - in real app, this would come from an API
   const nearbyClinics = [
     {
       name: "Sunrise Recovery Center",
@@ -62,7 +61,6 @@ const ClinicalSupport = () => {
   ];
 
   useEffect(() => {
-    // Get user's location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -73,7 +71,6 @@ const ClinicalSupport = () => {
         },
         (error) => {
           console.log('Location access denied');
-          // Use default location for demo
           setUserLocation({ lat: 40.7128, lng: -74.0060 });
         }
       );
@@ -102,7 +99,7 @@ const ClinicalSupport = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Map Section */}
           <Card className="glass-card h-96 animate-scale-in">
             <CardHeader>
@@ -121,6 +118,11 @@ const ClinicalSupport = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Watson AI Chat */}
+          <div className="animate-scale-in">
+            <WatsonChat />
+          </div>
 
           {/* Emergency Contact */}
           <Card className="glass-card animate-scale-in">
