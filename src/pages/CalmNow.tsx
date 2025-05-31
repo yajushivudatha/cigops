@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ const CalmNow = () => {
   const [isActive, setIsActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [phase, setPhase] = useState('');
-  const [technique, setTechnique] = useState('478');
+  const [technique, setTechnique] = useState('');
   const { speak } = useVoiceSupport();
 
   useEffect(() => {
@@ -53,6 +54,30 @@ const CalmNow = () => {
           setPhase('Inhale');
           speak("Inhale deeply.");
         }
+      } else if (technique === 'equal') {
+        if (phase === 'Inhale') {
+          setTimeLeft(6);
+          setPhase('Exhale');
+          speak("Exhale slowly.");
+        } else if (phase === 'Exhale') {
+          setTimeLeft(6);
+          setPhase('Inhale');
+          speak("Inhale deeply.");
+        }
+      } else if (technique === 'triangle') {
+        if (phase === 'Inhale') {
+          setTimeLeft(4);
+          setPhase('Hold');
+          speak("Hold your breath.");
+        } else if (phase === 'Hold') {
+          setTimeLeft(4);
+          setPhase('Exhale');
+          speak("Exhale slowly.");
+        } else if (phase === 'Exhale') {
+          setTimeLeft(4);
+          setPhase('Inhale');
+          speak("Inhale deeply.");
+        }
       }
     }
 
@@ -68,6 +93,12 @@ const CalmNow = () => {
       setTimeLeft(4);
       setPhase('Inhale');
     } else if (selectedTechnique === 'box') {
+      setTimeLeft(4);
+      setPhase('Inhale');
+    } else if (selectedTechnique === 'equal') {
+      setTimeLeft(6);
+      setPhase('Inhale');
+    } else if (selectedTechnique === 'triangle') {
       setTimeLeft(4);
       setPhase('Inhale');
     }
@@ -86,8 +117,19 @@ const CalmNow = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
-      <div className="relative flex items-center justify-center">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-serif text-white mb-2 text-glow">
+          Calm Your Mind 🧘
+        </h1>
+        <p className="text-cyan-300 text-lg opacity-80">
+          You've resisted 3 cravings this week. Let's breathe together.
+        </p>
+      </div>
+
+      {/* Main Breathing Circle */}
+      <div className="relative flex items-center justify-center mb-8">
         {/* Breathing Circle */}
         <div className={`
           w-80 h-80 rounded-full border-4 border-cyan-400/50 flex items-center justify-center relative
@@ -96,25 +138,16 @@ const CalmNow = () => {
           {/* Inner Content */}
           <div className="text-center">
             {!isActive ? (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-serif text-white text-glow">
-                  Choose Your Breathing
-                </h2>
-                <div className="space-y-3">
-                  <Button
-                    onClick={() => startBreathingExercise('478')}
-                    className="w-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
-                  >
-                    4-7-8 Breathing
-                  </Button>
-                  <Button
-                    onClick={() => startBreathingExercise('box')}
-                    className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50"
-                  >
-                    Box Breathing
-                  </Button>
+              <Button
+                onClick={() => startBreathingExercise('478')}
+                size="lg"
+                className="w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 border-0 shadow-2xl transition-all duration-300 hover:scale-105"
+              >
+                <div className="flex flex-col items-center">
+                  <Play className="w-8 h-8 mb-1" />
+                  <span className="text-sm font-semibold">Begin</span>
                 </div>
-              </div>
+              </Button>
             ) : (
               <div className="text-center">
                 <div className="text-4xl font-bold text-cyan-400 mb-2">
@@ -154,6 +187,55 @@ const CalmNow = () => {
           <div className="w-[28rem] h-[28rem] border border-cyan-400/10 rounded-full animate-breathe" style={{ animationDelay: '1s' }}></div>
         </div>
       </div>
+
+      {/* Reset Button */}
+      {isActive && (
+        <Button
+          onClick={resetExercise}
+          variant="outline"
+          className="mb-8 bg-gray-500/20 border-gray-500/50 text-gray-300 hover:bg-gray-500/30"
+        >
+          <RotateCcw className="w-4 h-4 mr-2" />
+          Reset
+        </Button>
+      )}
+
+      {/* Additional Techniques */}
+      {!isActive && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl">
+          <Button
+            onClick={() => startBreathingExercise('478')}
+            className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 p-4 h-auto flex flex-col"
+          >
+            <span className="font-semibold mb-1">4-7-8</span>
+            <span className="text-xs opacity-80">Classic Relaxation</span>
+          </Button>
+          
+          <Button
+            onClick={() => startBreathingExercise('box')}
+            className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50 p-4 h-auto flex flex-col"
+          >
+            <span className="font-semibold mb-1">Box</span>
+            <span className="text-xs opacity-80">4-4-4-4 Pattern</span>
+          </Button>
+          
+          <Button
+            onClick={() => startBreathingExercise('equal')}
+            className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/50 p-4 h-auto flex flex-col"
+          >
+            <span className="font-semibold mb-1">Equal</span>
+            <span className="text-xs opacity-80">6-6 Balance</span>
+          </Button>
+          
+          <Button
+            onClick={() => startBreathingExercise('triangle')}
+            className="bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/50 p-4 h-auto flex flex-col"
+          >
+            <span className="font-semibold mb-1">Triangle</span>
+            <span className="text-xs opacity-80">4-4-4 Pattern</span>
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
