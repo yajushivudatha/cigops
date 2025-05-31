@@ -25,7 +25,7 @@ export const useVoiceSupport = () => {
       if (response.ok) {
         setConfig({
           apiKey,
-          voiceId: 'EXAVITQu4vr4xnSDxMaL' // Sarah voice
+          voiceId: '2WM58lWaTXuuBkN1puHx' // Your specific voice ID
         });
         setIsSupported(true);
         toast({

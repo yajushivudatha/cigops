@@ -8,6 +8,8 @@ import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import CalmNow from "./pages/CalmNow";
 import QuitPlan from "./pages/QuitPlan";
+import QuitPlanGenerator from "./pages/QuitPlanGenerator";
+import ClinicalSupport from "./pages/ClinicalSupport";
 import Support from "./pages/Support";
 import PDFAnalyzer from "./pages/PDFAnalyzer";
 import Marketplace from "./pages/Marketplace";
@@ -26,6 +28,8 @@ const App = () => (
             <Route index element={<Index />} />
             <Route path="calm" element={<CalmNow />} />
             <Route path="plan" element={<QuitPlan />} />
+            <Route path="plan-generator" element={<QuitPlanGenerator />} />
+            <Route path="clinical" element={<ClinicalSupport />} />
             <Route path="support" element={<Support />} />
             <Route path="analyzer" element={<PDFAnalyzer />} />
             <Route path="marketplace" element={<Marketplace />} />
