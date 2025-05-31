@@ -36,82 +36,94 @@ const QuitPlanGenerator = () => {
 
     setIsGenerating(true);
     
-    // Simulate AI plan generation
+    // Generate actual personalized plan based on user input
     setTimeout(() => {
+      const quitDateObj = new Date(formData.quitDate);
+      const today = new Date();
+      const daysUntilQuit = Math.ceil((quitDateObj.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      
       const plan = {
         quitDate: formData.quitDate,
+        name: formData.name,
+        currentUsage: formData.currentUsage,
+        motivation: formData.motivation,
         phases: [
           {
             phase: "Preparation Phase",
-            duration: "7 days before quit date",
+            duration: `${Math.max(1, daysUntilQuit)} days before quit date`,
             tasks: [
-              "Remove all smoking materials from home and car",
-              "Inform family and friends about your quit date",
-              "Download the recovery app and set up notifications",
-              "Stock up on healthy snacks and drinks",
-              "Practice breathing exercises daily"
+              `Remove all smoking materials from home and car`,
+              `Tell ${formData.supportSystem || 'family and friends'} about your quit date: ${formData.quitDate}`,
+              `Stock up on nicotine patches/gum if planning to use them`,
+              `Prepare alternatives for your triggers: ${formData.triggers || 'stress and social situations'}`,
+              `Practice breathing exercises daily using this app`,
+              `Write down your motivation: "${formData.motivation || 'better health'}"`
             ]
           },
           {
             phase: "Quit Day",
             duration: "Day 1",
             tasks: [
-              "Start your morning with meditation",
-              "Use the app's calm feature whenever you feel cravings",
-              "Stay hydrated - drink 8 glasses of water",
-              "Call a support person when tempted",
-              "Celebrate each hour smoke-free"
+              `Start your morning with meditation and remember: "${formData.motivation}"`,
+              `Use this app's voice guidance feature whenever you feel cravings`,
+              `Stay hydrated - drink 8 glasses of water`,
+              `Contact ${formData.supportSystem || 'your support person'} when tempted`,
+              `Celebrate each hour smoke-free - you're doing this!`,
+              `If using nicotine patches, apply your first one in the morning`
             ]
           },
           {
             phase: "Early Recovery",
             duration: "Days 2-7",
             tasks: [
-              "Use voice coaching feature during strong cravings",
-              "Take short walks when feeling stressed",
-              "Practice the 4-7-8 breathing technique",
-              "Join online support groups",
-              "Reward yourself for each smoke-free day"
+              `Continue using voice coaching during strong cravings`,
+              `Take short walks when facing your triggers: ${formData.triggers || 'stress'}`,
+              `Practice the 4-7-8 breathing technique from the app`,
+              `Check in with ${formData.supportSystem || 'your support network'} daily`,
+              `Reward yourself for each smoke-free day`,
+              `If using nicotine replacement, follow the recommended schedule`
             ]
           },
           {
             phase: "Stabilization",
             duration: "Weeks 2-4",
             tasks: [
-              "Establish new daily routines",
-              "Continue using app for motivation",
-              "Exercise regularly to manage stress",
-              "Avoid known triggers when possible",
-              "Consider professional counseling if needed"
+              `Establish new routines to replace smoking habits`,
+              `Continue using this app for motivation and support`,
+              `Exercise regularly to manage stress and improve health`,
+              `Avoid or modify situations related to: ${formData.triggers || 'your triggers'}`,
+              `Consider professional counseling if cravings are intense`,
+              `Gradually reduce nicotine replacement if using`
             ]
           }
         ],
         emergencyContacts: [
-          "Crisis Lifeline: 988",
-          "Your Support Person: (Add contact)",
-          "Local Clinic: (From clinical support page)"
+          "Crisis Helpline: 9152987821",
+          `Your Support Person: ${formData.supportSystem || '(Add contact)'}`,
+          "Mental Health Helpline: 1860-2662-345"
         ],
         dailyGoals: [
           "Use breathing exercises 3 times daily",
           "Log mood and cravings in the app",
           "Drink 8 glasses of water",
           "Take a 15-minute walk",
-          "Practice gratitude - write 3 things you're thankful for"
-        ]
+          `Remember your motivation: "${formData.motivation || 'your health and future'}"`
+        ],
+        nicotineAdvice: `Since you currently use ${formData.currentUsage}, consider nicotine patches or gum to manage withdrawal. Start with the highest strength and gradually reduce over 8-12 weeks. Patches provide steady nicotine release, while gum gives you control during cravings.`
       };
       
       setGeneratedPlan(plan);
       setIsGenerating(false);
       
       toast({
-        title: "Plan Generated!",
-        description: "Your personalized quit plan is ready."
+        title: "Personalized Plan Generated!",
+        description: `Your custom quit plan for ${formData.name} is ready.`
       });
     }, 2000);
   };
 
   return (
-    <div className="min-h-screen p-4 pt-20">
+    <div className="min-h-screen p-4 pt-20 bg-black">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
@@ -225,17 +237,28 @@ const QuitPlanGenerator = () => {
               <CardHeader>
                 <CardTitle className="text-white text-2xl flex items-center">
                   <Calendar className="w-6 h-6 mr-3 text-green-400" />
-                  Your Personalized Quit Plan
+                  {generatedPlan.name}'s Personalized Quit Plan
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-cyan-300 mb-4">
-                  Quit Date: <span className="font-bold text-white">{generatedPlan.quitDate}</span>
-                </p>
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <p className="text-cyan-300">
+                    Quit Date: <span className="font-bold text-white">{generatedPlan.quitDate}</span>
+                  </p>
+                  <p className="text-cyan-300">
+                    Current Usage: <span className="font-bold text-white">{generatedPlan.currentUsage}</span>
+                  </p>
+                </div>
+                
+                {/* Nicotine Replacement Advice */}
+                <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <h3 className="text-blue-300 font-semibold mb-3">💊 Nicotine Replacement Therapy Guide</h3>
+                  <p className="text-white text-sm">{generatedPlan.nicotineAdvice}</p>
+                </div>
                 
                 {/* Daily Goals */}
                 <div className="mb-6 p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
-                  <h3 className="text-cyan-300 font-semibold mb-3">Daily Goals</h3>
+                  <h3 className="text-cyan-300 font-semibold mb-3">🎯 Daily Goals</h3>
                   <ul className="space-y-2">
                     {generatedPlan.dailyGoals.map((goal, index) => (
                       <li key={index} className="text-white flex items-center">
@@ -248,7 +271,7 @@ const QuitPlanGenerator = () => {
 
                 {/* Emergency Contacts */}
                 <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <h3 className="text-red-300 font-semibold mb-3">Emergency Contacts</h3>
+                  <h3 className="text-red-300 font-semibold mb-3">🚨 Emergency Contacts</h3>
                   <ul className="space-y-2">
                     {generatedPlan.emergencyContacts.map((contact, index) => (
                       <li key={index} className="text-white">

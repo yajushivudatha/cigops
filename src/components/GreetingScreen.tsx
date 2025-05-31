@@ -9,7 +9,7 @@ const GreetingScreen = ({ onTransition }: GreetingScreenProps) => {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       onTransition();
-    }, 3000); // Show greeting for 3 seconds
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [onTransition]);
@@ -38,7 +38,7 @@ const GreetingScreen = ({ onTransition }: GreetingScreenProps) => {
           <div className="w-64 h-64 border border-cyan-400/10 rounded-full animate-breathe" style={{ animationDelay: '1s' }}></div>
         </div>
         
-        {/* Greeting Text - No background, just text */}
+        {/* Greeting Text - Centered, no background */}
         <div className="text-center animate-fade-in relative z-10">
           <h1 className="text-6xl font-serif text-white text-glow animate-pulse-glow">
             Good evening, Alex 💙

@@ -1,58 +1,58 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MapPin, Phone, Clock, Star } from 'lucide-react';
-import WatsonChat from '@/components/WatsonChat';
 
 const ClinicalSupport = () => {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
 
   const nearbyClinics = [
     {
-      name: "Sunrise Recovery Center",
-      address: "123 Hope Street, Downtown",
-      phone: "(555) 123-4567",
-      distance: "0.8 miles",
+      name: "Apollo Wellness Center",
+      address: "123 MG Road, Bangalore",
+      phone: "+91 80 2674 2222",
+      distance: "0.8 km",
       rating: 4.8,
       hours: "24/7",
       specialties: ["Addiction Recovery", "Mental Health"],
       emergency: true
     },
     {
-      name: "Valley Wellness Clinic",
-      address: "456 Healing Ave, Midtown",
-      phone: "(555) 234-5678",
-      distance: "1.2 miles",
+      name: "Manipal Hospital Recovery",
+      address: "456 Brigade Road, Bangalore",
+      phone: "+91 80 2552 2000",
+      distance: "1.2 km",
       rating: 4.6,
       hours: "8 AM - 8 PM",
       specialties: ["Outpatient Care", "Counseling"],
       emergency: false
     },
     {
-      name: "New Beginnings Rehab",
-      address: "789 Recovery Blvd, Uptown",
-      phone: "(555) 345-6789",
-      distance: "1.5 miles",
+      name: "NIMHANS De-addiction Centre",
+      address: "789 Hosur Road, Bangalore",
+      phone: "+91 80 2699 5000",
+      distance: "1.5 km",
       rating: 4.9,
       hours: "24/7",
       specialties: ["Inpatient Care", "Detox"],
       emergency: true
     },
     {
-      name: "Peaceful Mind Center",
-      address: "321 Serenity Lane, Westside",
-      phone: "(555) 456-7890",
-      distance: "2.1 miles",
+      name: "Fortis Mental Health Center",
+      address: "321 Bannerghatta Road, Bangalore",
+      phone: "+91 80 6621 4444",
+      distance: "2.1 km",
       rating: 4.7,
       hours: "9 AM - 6 PM",
       specialties: ["Therapy", "Support Groups"],
       emergency: false
     },
     {
-      name: "Harbor House Treatment",
-      address: "654 Anchor Way, Riverside",
-      phone: "(555) 567-8901",
-      distance: "2.3 miles",
+      name: "Cadabams Rehabilitation",
+      address: "654 Whitefield Road, Bangalore",
+      phone: "+91 97414 76476",
+      distance: "2.3 km",
       rating: 4.5,
       hours: "24/7",
       specialties: ["Residential Care", "Family Support"],
@@ -71,7 +71,7 @@ const ClinicalSupport = () => {
         },
         (error) => {
           console.log('Location access denied');
-          setUserLocation({ lat: 40.7128, lng: -74.0060 });
+          setUserLocation({ lat: 12.9716, lng: 77.5946 }); // Bangalore coordinates
         }
       );
     }
@@ -86,8 +86,12 @@ const ClinicalSupport = () => {
     window.open(`https://maps.google.com/maps?daddr=${encodedAddress}`, '_blank');
   };
 
+  const handleEmergencyCall = (number: string) => {
+    window.open(`tel:${number}`);
+  };
+
   return (
-    <div className="min-h-screen p-4 pt-20">
+    <div className="min-h-screen p-4 pt-20 bg-black">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
@@ -99,30 +103,37 @@ const ClinicalSupport = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Map Section */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-8">
+          {/* Interactive Map */}
           <Card className="glass-card h-96 animate-scale-in">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <MapPin className="w-5 h-5 mr-2 text-cyan-400" />
-                Nearby Clinics & Rehab Centers
+                Nearby Treatment Centers
               </CardTitle>
             </CardHeader>
             <CardContent className="h-full">
-              <div className="w-full h-64 bg-slate-800 rounded-lg flex items-center justify-center">
-                <div className="text-center text-gray-300">
+              <div 
+                className="w-full h-64 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg flex items-center justify-center relative overflow-hidden cursor-pointer"
+                onClick={() => window.open(`https://maps.google.com/maps?q=addiction+treatment+centers+near+me`, '_blank')}
+              >
+                {/* Simulated map with interactive elements */}
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute top-4 left-4 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                  <div className="absolute top-12 right-8 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="absolute bottom-8 left-12 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="absolute bottom-4 right-4 w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+                  <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-cyan-500 rounded-full animate-pulse transform -translate-x-1/2 -translate-y-1/2"></div>
+                </div>
+                <div className="text-center text-gray-300 z-10">
                   <MapPin className="w-12 h-12 mx-auto mb-2 text-cyan-400" />
-                  <p>Interactive map would display here</p>
-                  <p className="text-sm opacity-60">Showing {nearbyClinics.length} facilities nearby</p>
+                  <p className="font-semibold">Interactive Map</p>
+                  <p className="text-sm opacity-60">Click to open in Google Maps</p>
+                  <p className="text-xs opacity-40 mt-2">Showing {nearbyClinics.length} facilities nearby</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          {/* Watson AI Chat */}
-          <div className="animate-scale-in">
-            <WatsonChat />
-          </div>
 
           {/* Emergency Contact */}
           <Card className="glass-card animate-scale-in">
@@ -131,23 +142,31 @@ const ClinicalSupport = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <Button
-                onClick={() => handleCall('988')}
+                onClick={() => handleEmergencyCall('9152987821')}
                 className="w-full bg-red-600 hover:bg-red-700 text-white py-6 text-lg"
               >
                 <Phone className="w-6 h-6 mr-2" />
-                Call 988 - Crisis Lifeline
+                Crisis Helpline - 9152987821
               </Button>
               <Button
-                onClick={() => handleCall('911')}
+                onClick={() => handleEmergencyCall('102')}
                 variant="outline"
                 className="w-full border-red-400 text-red-400 hover:bg-red-400 hover:text-white py-4"
               >
                 <Phone className="w-5 h-5 mr-2" />
-                Emergency Services - 911
+                Emergency Services - 102
+              </Button>
+              <Button
+                onClick={() => handleEmergencyCall('1860-2662-345')}
+                variant="outline"
+                className="w-full border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white py-4"
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Mental Health Helpline
               </Button>
               <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                 <p className="text-yellow-300 text-sm">
-                  💡 If you're in immediate danger, call 911. For mental health crisis support, call 988.
+                  💡 If you're in immediate danger, call 102. For mental health crisis support, call the helpline numbers above.
                 </p>
               </div>
             </CardContent>
@@ -155,7 +174,7 @@ const ClinicalSupport = () => {
         </div>
 
         {/* Clinics List */}
-        <div className="mt-8">
+        <div>
           <h2 className="text-2xl font-semibold text-white mb-6">Treatment Centers Near You</h2>
           <div className="grid gap-4">
             {nearbyClinics.map((clinic, index) => (

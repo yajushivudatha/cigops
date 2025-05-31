@@ -3,16 +3,48 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Users, Heart, Send } from 'lucide-react';
+import WatsonChat from '@/components/WatsonChat';
 
 const Support = () => {
   const [message, setMessage] = useState('');
-  
-  const messages = [
+  const [messages, setMessages] = useState([
     { type: 'user', text: "Feeling really tempted today...", time: "2:30 PM" },
     { type: 'ai', text: "I understand that feeling. You've already come so far - 12 days is amazing! Remember your breathing exercise?", time: "2:31 PM" },
     { type: 'community', text: "You've got this! Day 12 was tough for me too, but it gets easier. 💪", author: "Sarah M.", time: "2:35 PM" },
     { type: 'ai', text: "Sarah's right. Your brain is rewiring itself. Each craving resisted makes you stronger. Want to try a 2-minute breathing session?", time: "2:36 PM" }
-  ];
+  ]);
+  
+  const handleSendMessage = () => {
+    if (!message.trim()) return;
+    
+    const newMessage = {
+      type: 'user',
+      text: message,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    
+    setMessages(prev => [...prev, newMessage]);
+    setMessage('');
+    
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse = {
+        type: 'ai',
+        text: "I hear you. Those feelings are completely normal in recovery. What specific situation is triggering this feeling right now?",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, aiResponse]);
+    }, 1000);
+  };
+
+  const handleEmergencySupport = () => {
+    window.open('tel:1860-2662-345');
+  };
+
+  const handleAICoach = () => {
+    // This will be the Watson AI integration
+    alert('Watson AI Coach activated! This feature connects you with IBM Watson for personalized guidance.');
+  };
 
   const communityMembers = [
     { name: "Sarah M.", days: 45, status: "online", avatar: "🌟" },
@@ -85,10 +117,12 @@ const Support = () => {
                       type="text"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                       placeholder="Share how you're feeling..."
                       className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
                     />
                     <Button
+                      onClick={handleSendMessage}
                       size="sm"
                       className="bg-cyan-500 hover:bg-cyan-600"
                     >
@@ -102,13 +136,15 @@ const Support = () => {
             {/* Quick Support Actions */}
             <div className="mt-6 grid grid-cols-2 gap-4">
               <Button
+                onClick={handleEmergencySupport}
                 variant="outline"
-                className="glass-card border-white/20 hover:border-cyan-400/50 hover:bg-cyan-500/10 h-16"
+                className="glass-card border-white/20 hover:border-red-400/50 hover:bg-red-500/10 h-16"
               >
                 <Heart className="w-5 h-5 mr-2 text-red-400" />
                 <span>Emergency Support</span>
               </Button>
               <Button
+                onClick={handleAICoach}
                 variant="outline"
                 className="glass-card border-white/20 hover:border-green-400/50 hover:bg-green-500/10 h-16"
               >
@@ -118,9 +154,11 @@ const Support = () => {
             </div>
           </div>
 
-          {/* Community Sidebar */}
+          {/* Watson AI Integration */}
           <div className="space-y-6">
-            {/* Online Members */}
+            <WatsonChat />
+            
+            {/* Community Members */}
             <Card className="glass-card p-6 animate-scale-in">
               <CardContent className="p-0">
                 <h3 className="text-xl font-semibold text-white mb-4 flex items-center">

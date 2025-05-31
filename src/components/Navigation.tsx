@@ -13,7 +13,7 @@ const Navigation = () => {
     { icon: Target, label: "Plan Generator", path: "/plan-generator" },
     { icon: Users, label: "Support", path: "/support" },
     { icon: MapPin, label: "Clinical", path: "/clinical" },
-    { icon: FileText, label: "PDF Analyzer", path: "/analyzer" },
+    { icon: FileText, label: "Medical Report", path: "/analyzer" },
     { icon: ShoppingBag, label: "Marketplace", path: "/marketplace" }
   ];
 

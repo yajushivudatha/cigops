@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -64,23 +63,27 @@ const WatsonChat = () => {
   const generateWatsonResponse = (userInput: string): string => {
     const input = userInput.toLowerCase();
     
+    if (input.includes('nicotine') && (input.includes('patch') || input.includes('gum') || input.includes('replacement'))) {
+      return "Nicotine replacement therapy (NRT) can be very effective. For patches: Start with 21mg if you smoke 10+ cigarettes daily, 14mg for lighter smokers. Apply to clean, dry skin on upper body, rotate location daily. Use for 6-8 weeks, then step down to 14mg, then 7mg. For gum: Use 4mg if you smoke within 30 minutes of waking, otherwise 2mg. Chew slowly until you taste nicotine, then park between cheek and gum. Would you like specific guidance based on your smoking habits?";
+    }
+    
     if (input.includes('treatment') || input.includes('rehab')) {
       return "Based on clinical evidence, effective addiction treatment typically includes a combination of medical detox, behavioral therapy, and long-term support. I can help you find local treatment centers that offer these evidence-based approaches. Would you like me to search for facilities in your area?";
     }
     
     if (input.includes('withdrawal') || input.includes('detox')) {
-      return "Withdrawal symptoms are a normal part of recovery. Medical supervision during detox is recommended for safety. Symptoms typically peak within 72 hours and gradually improve. I can provide information about medically-assisted detox programs near you. Are you experiencing withdrawal symptoms now?";
+      return "Withdrawal symptoms are a normal part of recovery. Common symptoms include irritability, anxiety, difficulty concentrating, and cravings. These typically peak within 72 hours and gradually improve over 2-4 weeks. Nicotine replacement therapy can reduce these symptoms by 50-70%. Stay hydrated, get rest, and use coping strategies. Are you experiencing specific withdrawal symptoms?";
     }
     
-    if (input.includes('relapse') || input.includes('craving')) {
-      return "Cravings are a normal part of recovery. Evidence-based strategies include: mindfulness techniques, reaching out to support networks, engaging in physical activity, and using coping skills from therapy. If cravings are intense, consider contacting your treatment provider or calling a crisis line. Would you like specific coping strategies?";
+    if (input.includes('craving') || input.includes('urge')) {
+      return "Cravings are intense but temporary - they typically last 3-5 minutes. Evidence-based strategies: Use the '4 D's' - Delay (wait 10 minutes), Deep breathe (try the 4-7-8 technique), Drink water, Do something else. The app's breathing exercises are excellent for this. Physical activity, calling support contacts, or nicotine gum can also help. How long have you been smoke-free?";
     }
     
-    if (input.includes('help') || input.includes('emergency')) {
-      return "If you're in immediate crisis, please call 988 (Suicide & Crisis Lifeline) or 911. For non-emergency support, I can help you find local treatment resources, provide information about addiction recovery, or discuss evidence-based treatment options. What specific support do you need?";
+    if (input.includes('help') || input.includes('emergency') || input.includes('crisis')) {
+      return "If you're in immediate crisis, please call 9152987821 (Crisis Helpline) or 102 (Emergency Services). For non-emergency support, I can provide evidence-based strategies, help you understand nicotine replacement options, or discuss treatment approaches. What specific support do you need right now?";
     }
     
-    return "I understand you're looking for support. As your AI clinical assistant, I can provide evidence-based information about addiction treatment, help you find local resources, or discuss recovery strategies. Could you tell me more specifically how I can help you today?";
+    return "I'm here to provide evidence-based support for your recovery journey. I can help with nicotine replacement therapy guidance, withdrawal management, treatment options, or coping strategies. What would you like to know more about?";
   };
 
   return (
