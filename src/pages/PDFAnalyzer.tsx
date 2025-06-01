@@ -212,7 +212,7 @@ const PDFAnalyzer = () => {
 
               {/* Sample Reports */}
               <div className="mt-6">
-                <h4 className="text-white mb-4">Try Reports:</h4>
+                <h4 className="text-white mb-4">Your Reports:</h4>
                 <div className="grid grid-cols-1 gap-3">
                   <Button
                     onClick={() => handleSampleReport('xray')}

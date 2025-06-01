@@ -4,152 +4,95 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 import { useVoiceSupport } from '@/hooks/useVoiceSupport';
+import { meditationScripts } from '@/utils/meditationScripts';
 
 const CalmNow = () => {
   const [isActive, setIsActive] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [phase, setPhase] = useState('');
+  const [currentStep, setCurrentStep] = useState(0);
   const [technique, setTechnique] = useState('');
   const { speak, stopCurrentAudio } = useVoiceSupport();
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const scriptTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Cleanup on unmount - stop audio and timers
   useEffect(() => {
     return () => {
       stopCurrentAudio();
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+      if (scriptTimeoutRef.current) {
+        clearTimeout(scriptTimeoutRef.current);
       }
     };
   }, [stopCurrentAudio]);
 
-  useEffect(() => {
-    if (isActive && timeLeft > 0) {
-      intervalRef.current = setInterval(() => {
-        setTimeLeft(prevTime => prevTime - 1);
-      }, 1000);
-    } else if (isActive && timeLeft === 0) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+  const playMeditationScript = async (selectedTechnique: string) => {
+    const script = meditationScripts[selectedTechnique as keyof typeof meditationScripts];
+    if (!script) return;
 
-      if (technique === '478') {
-        if (phase === 'Inhale') {
-          setTimeLeft(7);
-          setPhase('Hold');
-          speak("Hold your breath for 7 seconds.");
-        } else if (phase === 'Hold') {
-          setTimeLeft(8);
-          setPhase('Exhale');
-          speak("Now exhale slowly for 8 seconds.");
-        } else if (phase === 'Exhale') {
-          setTimeLeft(4);
-          setPhase('Inhale');
-          speak("Inhale deeply through your nose for 4 seconds.");
-        }
-      } else if (technique === 'box') {
-        if (phase === 'Inhale') {
-          setTimeLeft(4);
-          setPhase('Hold1');
-          speak("Hold your breath for 4 seconds.");
-        } else if (phase === 'Hold1') {
-          setTimeLeft(4);
-          setPhase('Exhale');
-          speak("Exhale slowly for 4 seconds.");
-        } else if (phase === 'Exhale') {
-          setTimeLeft(4);
-          setPhase('Hold2');
-          speak("Hold your breath again for 4 seconds.");
-        } else if (phase === 'Hold2') {
-          setTimeLeft(4);
-          setPhase('Inhale');
-          speak("Inhale deeply for 4 seconds.");
-        }
-      } else if (technique === 'equal') {
-        if (phase === 'Inhale') {
-          setTimeLeft(6);
-          setPhase('Exhale');
-          speak("Now exhale slowly for 6 seconds.");
-        } else if (phase === 'Exhale') {
-          setTimeLeft(6);
-          setPhase('Inhale');
-          speak("Inhale deeply for 6 seconds.");
-        }
-      } else if (technique === 'triangle') {
-        if (phase === 'Inhale') {
-          setTimeLeft(4);
-          setPhase('Hold');
-          speak("Hold your breath for 4 seconds.");
-        } else if (phase === 'Hold') {
-          setTimeLeft(4);
-          setPhase('Exhale');
-          speak("Exhale slowly for 4 seconds.");
-        } else if (phase === 'Exhale') {
-          setTimeLeft(4);
-          setPhase('Inhale');
-          speak("Inhale deeply for 4 seconds.");
-        }
-      }
+    setIsPlaying(true);
+    
+    // Stop any existing audio first
+    stopCurrentAudio();
+    if (scriptTimeoutRef.current) {
+      clearTimeout(scriptTimeoutRef.current);
     }
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isActive, timeLeft, phase, technique, speak]);
+    // Play introduction
+    await new Promise(resolve => {
+      speak(script.introduction);
+      scriptTimeoutRef.current = setTimeout(resolve, 3000);
+    });
+
+    // Play each cycle with proper timing
+    for (let i = 0; i < script.cycles.length; i++) {
+      if (!isActive) break;
+      
+      setCurrentStep(i + 1);
+      await new Promise(resolve => {
+        speak(script.cycles[i]);
+        // Adjust timing based on script length
+        const timing = script.cycles[i].includes('—') ? 15000 : 5000;
+        scriptTimeoutRef.current = setTimeout(resolve, timing);
+      });
+    }
+
+    // Play conclusion
+    if (isActive) {
+      await new Promise(resolve => {
+        speak(script.conclusion);
+        scriptTimeoutRef.current = setTimeout(resolve, 5000);
+      });
+    }
+
+    setIsPlaying(false);
+    setCurrentStep(0);
+  };
 
   const startBreathingExercise = (selectedTechnique: string) => {
     // Stop any existing exercise and audio first
     stopExercise();
-    stopCurrentAudio();
     
     setTechnique(selectedTechnique);
     setIsActive(true);
+    setCurrentStep(0);
     
-    let introText = "";
-    if (selectedTechnique === '478') {
-      introText = "Starting 4-7-8 breathing. Find a comfortable position and close your eyes if you wish. Inhale for 4, hold for 7, exhale for 8. Let's begin.";
-      setTimeLeft(4);
-      setPhase('Inhale');
-    } else if (selectedTechnique === 'box') {
-      introText = "Starting box breathing. This technique helps with focus and calm. We'll breathe in equal counts of 4. Get comfortable and let's begin.";
-      setTimeLeft(4);
-      setPhase('Inhale');
-    } else if (selectedTechnique === 'equal') {
-      introText = "Starting equal breathing. This balances your nervous system with equal inhale and exhale. Find your rhythm and let's begin.";
-      setTimeLeft(6);
-      setPhase('Inhale');
-    } else if (selectedTechnique === 'triangle') {
-      introText = "Starting triangle breathing. A simple 3-part breath to center yourself. Relax your shoulders and let's begin.";
-      setTimeLeft(4);
-      setPhase('Inhale');
-    }
-    
-    speak(introText);
+    // Start the meditation script
+    playMeditationScript(selectedTechnique);
   };
 
   const stopExercise = () => {
     setIsActive(false);
-    setTimeLeft(0);
-    setPhase('');
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+    setIsPlaying(false);
+    setCurrentStep(0);
     stopCurrentAudio();
-    speak("Breathing exercise stopped. Take a moment to notice how you feel.");
+    
+    if (scriptTimeoutRef.current) {
+      clearTimeout(scriptTimeoutRef.current);
+    }
   };
 
   const resetExercise = () => {
-    setIsActive(false);
-    setTimeLeft(0);
-    setPhase('');
+    stopExercise();
     setTechnique('');
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    stopCurrentAudio();
-    speak("Exercise reset. Choose another technique when you're ready.");
   };
 
   return (
@@ -175,23 +118,27 @@ const CalmNow = () => {
             {/* Inner Content */}
             <div className="text-center">
               {!isActive ? (
-                <Button
-                  onClick={() => startBreathingExercise('478')}
-                  size="lg"
-                  className="w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 border-0 shadow-2xl transition-all duration-300 hover:scale-105"
-                >
-                  <div className="flex flex-col items-center">
-                    <Play className="w-8 h-8 mb-1" />
-                    <span className="text-sm font-semibold">Begin</span>
+                <div className="text-center">
+                  <div className="text-xl text-white mb-4">
+                    Choose a technique below
                   </div>
-                </Button>
+                  <div className="text-cyan-300 text-sm">
+                    Each includes guided voice instructions
+                  </div>
+                </div>
               ) : (
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-cyan-400 mb-2">
-                    {timeLeft}
+                  <div className="text-3xl font-bold text-cyan-400 mb-2">
+                    {technique === '478' ? '4-7-8' : 
+                     technique === 'box' ? 'Box' : 
+                     technique === 'equal' ? 'Equal' : 
+                     technique === 'triangle' ? 'Triangle' : technique}
                   </div>
-                  <div className="text-xl text-white mb-4">
-                    {phase}
+                  <div className="text-lg text-white mb-2">
+                    Step {currentStep}
+                  </div>
+                  <div className="text-sm text-cyan-300 mb-4">
+                    {isPlaying ? 'Listening to guidance...' : 'In progress...'}
                   </div>
                   <div className="space-x-2">
                     <Button
@@ -225,7 +172,7 @@ const CalmNow = () => {
           </div>
         </div>
 
-        {/* Additional Techniques - Round Buttons */}
+        {/* Breathing Techniques - Round Buttons */}
         {!isActive && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mb-8 animate-fade-in">
             <div className="text-center">
