@@ -109,50 +109,21 @@ const ClinicalSupport = () => {
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <MapPin className="w-5 h-5 mr-2 text-cyan-400" />
-                Nearby Treatment Centers
+                Treatment Centers Near You
               </CardTitle>
             </CardHeader>
             <CardContent className="h-full">
-              <div 
-                className="w-full h-64 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg relative overflow-hidden cursor-pointer border border-cyan-400/20"
-                onClick={() => window.open(`https://maps.google.com/maps?q=addiction+treatment+centers+near+me`, '_blank')}
-              >
-                {/* Map visualization */}
-                <div className="absolute inset-0 p-4">
-                  {/* Grid lines to simulate map */}
-                  <div className="absolute inset-0 opacity-10">
-                    {[...Array(8)].map((_, i) => (
-                      <div key={i} className="absolute border-t border-gray-400" style={{ top: `${i * 12.5}%`, width: '100%' }} />
-                    ))}
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="absolute border-l border-gray-400" style={{ left: `${i * 16.66}%`, height: '100%' }} />
-                    ))}
-                  </div>
-                  
-                  {/* Facility markers */}
-                  <div className="absolute top-4 left-4 w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></div>
-                  <div className="absolute top-12 right-8 w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></div>
-                  <div className="absolute bottom-8 left-12 w-3 h-3 bg-blue-500 rounded-full animate-pulse shadow-lg shadow-blue-500/50"></div>
-                  <div className="absolute bottom-4 right-4 w-3 h-3 bg-yellow-500 rounded-full animate-pulse shadow-lg shadow-yellow-500/50"></div>
-                  <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-cyan-500 rounded-full animate-pulse transform -translate-x-1/2 -translate-y-1/2 shadow-lg shadow-cyan-500/50"></div>
-                  
-                  {/* Center location indicator */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-6 h-6 bg-cyan-400 rounded-full flex items-center justify-center shadow-lg">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Map overlay text */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-                  <div className="text-center text-white z-10 bg-black/50 p-4 rounded-lg border border-cyan-400/30">
-                    <MapPin className="w-12 h-12 mx-auto mb-2 text-cyan-400" />
-                    <p className="font-semibold">Live Treatment Center Map</p>
-                    <p className="text-sm opacity-80">Click to open in Google Maps</p>
-                    <p className="text-xs opacity-60 mt-2">Showing {nearbyClinics.length} facilities nearby</p>
-                  </div>
-                </div>
+              <div className="w-full h-64 rounded-lg relative overflow-hidden">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d248849.8729732977!2d77.49085452503953!3d12.954285118847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1saddiction%20treatment%20centers%20bangalore!5e0!3m2!1sen!2sin!4v1703749281847!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={true}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="rounded-lg"
+                ></iframe>
               </div>
             </CardContent>
           </Card>
