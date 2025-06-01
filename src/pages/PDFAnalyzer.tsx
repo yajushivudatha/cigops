@@ -212,7 +212,7 @@ const PDFAnalyzer = () => {
 
               {/* Sample Reports */}
               <div className="mt-6">
-                <h4 className="text-white mb-4">Try Sample Reports:</h4>
+                <h4 className="text-white mb-4">Try Reports:</h4>
                 <div className="grid grid-cols-1 gap-3">
                   <Button
                     onClick={() => handleSampleReport('xray')}
@@ -221,7 +221,7 @@ const PDFAnalyzer = () => {
                   >
                     <div className="text-2xl mr-3">🫁</div>
                     <div className="text-left">
-                      <div className="font-semibold">Sample Chest X-Ray</div>
+                      <div className="font-semibold">Chest X-Ray</div>
                       <div className="text-xs opacity-80">Smoking-related lung changes</div>
                     </div>
                   </Button>
@@ -232,7 +232,7 @@ const PDFAnalyzer = () => {
                   >
                     <div className="text-2xl mr-3">🩸</div>
                     <div className="text-left">
-                      <div className="font-semibold">Sample Blood Test</div>
+                      <div className="font-semibold">Blood Test</div>
                       <div className="text-xs opacity-80">Nicotine & inflammatory markers</div>
                     </div>
                   </Button>
@@ -243,7 +243,7 @@ const PDFAnalyzer = () => {
                   >
                     <div className="text-2xl mr-3">💨</div>
                     <div className="text-left">
-                      <div className="font-semibold">Sample Lung Function</div>
+                      <div className="font-semibold">Lung Function</div>
                       <div className="text-xs opacity-80">Spirometry results</div>
                     </div>
                   </Button>
@@ -281,7 +281,7 @@ const PDFAnalyzer = () => {
                   {/* Sample Data Section */}
                   {analyzedReport.sampleData && (
                     <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                      <h4 className="text-purple-300 font-semibold mb-3">Sample Data Values</h4>
+                      <h4 className="text-purple-300 font-semibold mb-3">Data Values</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {Object.entries(analyzedReport.sampleData).map(([key, value]) => (
                           <div key={key} className="flex justify-between items-center p-2 bg-black/30 rounded">

@@ -11,17 +11,7 @@ const CalmNow = () => {
   const [phase, setPhase] = useState('');
   const [technique, setTechnique] = useState('');
   const { speak } = useVoiceSupport();
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Stop any current audio
-  const stopCurrentAudio = () => {
-    if (currentAudioRef.current) {
-      currentAudioRef.current.pause();
-      currentAudioRef.current.currentTime = 0;
-      currentAudioRef.current = null;
-    }
-  };
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
@@ -132,7 +122,6 @@ const CalmNow = () => {
     setIsActive(false);
     setTimeLeft(0);
     setPhase('');
-    stopCurrentAudio();
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -144,7 +133,6 @@ const CalmNow = () => {
     setTimeLeft(0);
     setPhase('');
     setTechnique('');
-    stopCurrentAudio();
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -224,40 +212,48 @@ const CalmNow = () => {
           </div>
         </div>
 
-        {/* Additional Techniques */}
+        {/* Additional Techniques - Round Buttons */}
         {!isActive && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mb-8 animate-fade-in">
-            <Button
-              onClick={() => startBreathingExercise('478')}
-              className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
-            >
-              <span className="font-semibold mb-1">4-7-8</span>
-              <span className="text-xs opacity-80">Classic Relaxation</span>
-            </Button>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mb-8 animate-fade-in">
+            <div className="text-center">
+              <Button
+                onClick={() => startBreathingExercise('478')}
+                className="w-20 h-20 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 transition-all duration-300 hover:scale-105 mb-2"
+              >
+                <span className="text-xs font-semibold">4-7-8</span>
+              </Button>
+              <p className="text-xs text-cyan-300 opacity-80">Classic Relaxation</p>
+            </div>
             
-            <Button
-              onClick={() => startBreathingExercise('box')}
-              className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
-            >
-              <span className="font-semibold mb-1">Box</span>
-              <span className="text-xs opacity-80">4-4-4-4 Pattern</span>
-            </Button>
+            <div className="text-center">
+              <Button
+                onClick={() => startBreathingExercise('box')}
+                className="w-20 h-20 rounded-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50 transition-all duration-300 hover:scale-105 mb-2"
+              >
+                <span className="text-xs font-semibold">Box</span>
+              </Button>
+              <p className="text-xs text-blue-300 opacity-80">4-4-4-4 Pattern</p>
+            </div>
             
-            <Button
-              onClick={() => startBreathingExercise('equal')}
-              className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
-            >
-              <span className="font-semibold mb-1">Equal</span>
-              <span className="text-xs opacity-80">6-6 Balance</span>
-            </Button>
+            <div className="text-center">
+              <Button
+                onClick={() => startBreathingExercise('equal')}
+                className="w-20 h-20 rounded-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/50 transition-all duration-300 hover:scale-105 mb-2"
+              >
+                <span className="text-xs font-semibold">Equal</span>
+              </Button>
+              <p className="text-xs text-purple-300 opacity-80">6-6 Balance</p>
+            </div>
             
-            <Button
-              onClick={() => startBreathingExercise('triangle')}
-              className="bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
-            >
-              <span className="font-semibold mb-1">Triangle</span>
-              <span className="text-xs opacity-80">4-4-4 Pattern</span>
-            </Button>
+            <div className="text-center">
+              <Button
+                onClick={() => startBreathingExercise('triangle')}
+                className="w-20 h-20 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/50 transition-all duration-300 hover:scale-105 mb-2"
+              >
+                <span className="text-xs font-semibold">Triangle</span>
+              </Button>
+              <p className="text-xs text-green-300 opacity-80">4-4-4 Pattern</p>
+            </div>
           </div>
         )}
 
