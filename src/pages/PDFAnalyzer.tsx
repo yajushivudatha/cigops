@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,21 +16,41 @@ const PDFAnalyzer = () => {
       findings: 'Mild bilateral lower lobe opacity consistent with smoking-related inflammation. No acute consolidation or pneumothorax.',
       recommendation: 'Significant improvement expected within 2-3 months of smoking cessation. Follow-up recommended in 6 weeks.',
       severity: 'Moderate',
-      details: 'Heart size normal. Lung fields show increased markings in lower zones. No pleural effusion.'
+      details: 'Heart size normal. Lung fields show increased markings in lower zones. No pleural effusion.',
+      sampleData: {
+        lungOpacity: '15%',
+        heartSize: 'Normal (CTR: 0.45)',
+        pleuralSpaces: 'Clear',
+        boneStructures: 'Intact'
+      }
     },
     bloodTest: {
       type: 'Blood Test - Nicotine Levels',
       findings: 'Cotinine level: 15 ng/mL (Normal: <3 ng/mL for non-smokers). Elevated inflammatory markers (CRP: 8.2 mg/L).',
       recommendation: 'Cotinine levels will normalize within 7-10 days after quitting. Inflammatory markers should improve within 2-4 weeks.',
       severity: 'High',
-      details: 'Complete blood count normal. Liver function tests within normal limits.'
+      details: 'Complete blood count normal. Liver function tests within normal limits.',
+      sampleData: {
+        cotinine: '15 ng/mL',
+        crp: '8.2 mg/L',
+        wbc: '7,200/μL',
+        hemoglobin: '14.2 g/dL',
+        platelets: '285,000/μL'
+      }
     },
     lungFunction: {
       type: 'Lung Function Test (Spirometry)',
       findings: 'FEV1: 78% predicted (Normal: >80%). FEV1/FVC ratio: 0.65 (Normal: >0.70). Mild airway obstruction.',
       recommendation: 'Lung function can improve by 5-10% within first year of quitting smoking. Consider pulmonary rehabilitation.',
       severity: 'Moderate',
-      details: 'Peak flow: 420 L/min (85% predicted). Response to bronchodilator: 8% improvement.'
+      details: 'Peak flow: 420 L/min (85% predicted). Response to bronchodilator: 8% improvement.',
+      sampleData: {
+        fev1: '78% predicted',
+        fvc: '92% predicted',
+        fev1fvc: '0.65',
+        peakFlow: '420 L/min',
+        bronchodilatorResponse: '8% improvement'
+      }
     }
   };
 
@@ -259,6 +278,23 @@ const PDFAnalyzer = () => {
                     <p className="text-white">{analyzedReport.type}</p>
                   </div>
 
+                  {/* Sample Data Section */}
+                  {analyzedReport.sampleData && (
+                    <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+                      <h4 className="text-purple-300 font-semibold mb-3">Sample Data Values</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {Object.entries(analyzedReport.sampleData).map(([key, value]) => (
+                          <div key={key} className="flex justify-between items-center p-2 bg-black/30 rounded">
+                            <span className="text-gray-300 capitalize text-sm">
+                              {key.replace(/([A-Z])/g, ' $1')}:
+                            </span>
+                            <span className="text-white font-medium text-sm">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Findings */}
                   <div className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
                     <h4 className="text-orange-300 font-semibold mb-2 flex items-center">
@@ -340,7 +376,7 @@ const PDFAnalyzer = () => {
               </div>
             </div>
           </CardContent>
-        </div>
+        </Card>
       </div>
     </div>
   );
