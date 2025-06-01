@@ -10,8 +10,18 @@ const CalmNow = () => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [phase, setPhase] = useState('');
   const [technique, setTechnique] = useState('');
-  const { speak } = useVoiceSupport();
+  const { speak, stopCurrentAudio } = useVoiceSupport();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup on unmount - stop audio and timers
+  useEffect(() => {
+    return () => {
+      stopCurrentAudio();
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [stopCurrentAudio]);
 
   useEffect(() => {
     if (isActive && timeLeft > 0) {
@@ -90,8 +100,9 @@ const CalmNow = () => {
   }, [isActive, timeLeft, phase, technique, speak]);
 
   const startBreathingExercise = (selectedTechnique: string) => {
-    // Stop any existing exercise first
+    // Stop any existing exercise and audio first
     stopExercise();
+    stopCurrentAudio();
     
     setTechnique(selectedTechnique);
     setIsActive(true);
@@ -125,6 +136,7 @@ const CalmNow = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
+    stopCurrentAudio();
     speak("Breathing exercise stopped. Take a moment to notice how you feel.");
   };
 
@@ -136,11 +148,12 @@ const CalmNow = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
+    stopCurrentAudio();
     speak("Exercise reset. Choose another technique when you're ready.");
   };
 
   return (
-    <div className="min-h-screen bg-black overflow-y-auto">
+    <div className="min-h-screen bg-black overflow-y-auto pb-16">
       <div className="flex flex-col items-center justify-start p-4 min-h-screen">
         {/* Header */}
         <div className="text-center mb-8 mt-8">

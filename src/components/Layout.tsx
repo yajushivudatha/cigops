@@ -33,7 +33,7 @@ const Layout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-black relative">
       {/* Breathing Bubbles Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 bg-cyan-500/20 rounded-full animate-breathe"></div>
@@ -64,7 +64,7 @@ const Layout = () => {
       <Navigation />
 
       {/* Main Content */}
-      <div className="relative z-10">
+      <div className="relative z-10 pb-24">
         <Outlet />
       </div>
     </div>
