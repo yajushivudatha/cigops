@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, Zap, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Zap, AlertCircle, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PDFAnalyzer = () => {
@@ -10,6 +10,30 @@ const PDFAnalyzer = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzedReport, setAnalyzedReport] = useState<any>(null);
   const { toast } = useToast();
+
+  const sampleReports = {
+    xray: {
+      type: 'Chest X-Ray',
+      findings: 'Mild bilateral lower lobe opacity consistent with smoking-related inflammation. No acute consolidation or pneumothorax.',
+      recommendation: 'Significant improvement expected within 2-3 months of smoking cessation. Follow-up recommended in 6 weeks.',
+      severity: 'Moderate',
+      details: 'Heart size normal. Lung fields show increased markings in lower zones. No pleural effusion.'
+    },
+    bloodTest: {
+      type: 'Blood Test - Nicotine Levels',
+      findings: 'Cotinine level: 15 ng/mL (Normal: <3 ng/mL for non-smokers). Elevated inflammatory markers (CRP: 8.2 mg/L).',
+      recommendation: 'Cotinine levels will normalize within 7-10 days after quitting. Inflammatory markers should improve within 2-4 weeks.',
+      severity: 'High',
+      details: 'Complete blood count normal. Liver function tests within normal limits.'
+    },
+    lungFunction: {
+      type: 'Lung Function Test (Spirometry)',
+      findings: 'FEV1: 78% predicted (Normal: >80%). FEV1/FVC ratio: 0.65 (Normal: >0.70). Mild airway obstruction.',
+      recommendation: 'Lung function can improve by 5-10% within first year of quitting smoking. Consider pulmonary rehabilitation.',
+      severity: 'Moderate',
+      details: 'Peak flow: 420 L/min (85% predicted). Response to bronchodilator: 8% improvement.'
+    }
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -57,12 +81,8 @@ const PDFAnalyzer = () => {
 
     // Simulate analysis
     setTimeout(() => {
-      setAnalyzedReport({
-        type: 'Chest X-Ray',
-        findings: 'Mild inflammation in lower lobes',
-        recommendation: 'Significant improvement expected within 3 months of quitting',
-        severity: 'Moderate'
-      });
+      const randomReport = Object.values(sampleReports)[Math.floor(Math.random() * 3)];
+      setAnalyzedReport(randomReport);
       setIsAnalyzing(false);
       
       toast({
@@ -80,6 +100,24 @@ const PDFAnalyzer = () => {
     input.click();
   };
 
+  const handleSampleReport = (reportType: keyof typeof sampleReports) => {
+    setIsAnalyzing(true);
+    toast({
+      title: "Loading sample report",
+      description: `Analyzing sample ${reportType.replace(/([A-Z])/g, ' $1').toLowerCase()}...`
+    });
+
+    setTimeout(() => {
+      setAnalyzedReport(sampleReports[reportType]);
+      setIsAnalyzing(false);
+      
+      toast({
+        title: "Sample analysis complete",
+        description: "Sample report has been analyzed."
+      });
+    }, 2000);
+  };
+
   const handleSaveToTimeline = () => {
     console.log('Saving to health timeline...');
     toast({
@@ -88,8 +126,15 @@ const PDFAnalyzer = () => {
     });
   };
 
+  const handleDownloadReport = () => {
+    toast({
+      title: "Download started",
+      description: "Your analysis report is being downloaded."
+    });
+  };
+
   return (
-    <div className="min-h-screen p-4 pt-20">
+    <div className="min-h-screen p-4 pt-20 bg-black overflow-y-auto">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
@@ -135,7 +180,7 @@ const PDFAnalyzer = () => {
                 </div>
 
                 <Button 
-                  className="bg-cyan-500 hover:bg-cyan-600"
+                  className="bg-cyan-500 hover:bg-cyan-600 mb-4"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleChooseFile();
@@ -146,19 +191,43 @@ const PDFAnalyzer = () => {
                 </Button>
               </div>
 
-              {/* Supported Formats */}
-              <div className="mt-6 grid grid-cols-3 gap-4 text-center">
-                <div className="p-3 bg-white/5 rounded-lg">
-                  <div className="text-2xl mb-2">🫁</div>
-                  <p className="text-sm text-gray-300">Chest X-rays</p>
-                </div>
-                <div className="p-3 bg-white/5 rounded-lg">
-                  <div className="text-2xl mb-2">🩸</div>
-                  <p className="text-sm text-gray-300">Blood Tests</p>
-                </div>
-                <div className="p-3 bg-white/5 rounded-lg">
-                  <div className="text-2xl mb-2">💨</div>
-                  <p className="text-sm text-gray-300">Lung Function</p>
+              {/* Sample Reports */}
+              <div className="mt-6">
+                <h4 className="text-white mb-4">Try Sample Reports:</h4>
+                <div className="grid grid-cols-1 gap-3">
+                  <Button
+                    onClick={() => handleSampleReport('xray')}
+                    variant="outline"
+                    className="bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30 justify-start"
+                  >
+                    <div className="text-2xl mr-3">🫁</div>
+                    <div className="text-left">
+                      <div className="font-semibold">Sample Chest X-Ray</div>
+                      <div className="text-xs opacity-80">Smoking-related lung changes</div>
+                    </div>
+                  </Button>
+                  <Button
+                    onClick={() => handleSampleReport('bloodTest')}
+                    variant="outline"
+                    className="bg-red-500/20 border-red-500/50 text-red-300 hover:bg-red-500/30 justify-start"
+                  >
+                    <div className="text-2xl mr-3">🩸</div>
+                    <div className="text-left">
+                      <div className="font-semibold">Sample Blood Test</div>
+                      <div className="text-xs opacity-80">Nicotine & inflammatory markers</div>
+                    </div>
+                  </Button>
+                  <Button
+                    onClick={() => handleSampleReport('lungFunction')}
+                    variant="outline"
+                    className="bg-green-500/20 border-green-500/50 text-green-300 hover:bg-green-500/30 justify-start"
+                  >
+                    <div className="text-2xl mr-3">💨</div>
+                    <div className="text-left">
+                      <div className="font-semibold">Sample Lung Function</div>
+                      <div className="text-xs opacity-80">Spirometry results</div>
+                    </div>
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -174,7 +243,7 @@ const PDFAnalyzer = () => {
 
               {isAnalyzing ? (
                 <div className="text-center py-12">
-                  <div className="w-24 h-24 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
+                  <div className="w-24 h-24 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
                     <Zap className="w-12 h-12 text-cyan-400 animate-pulse" />
                   </div>
                   <h4 className="text-xl text-white mb-2">Analyzing...</h4>
@@ -196,7 +265,10 @@ const PDFAnalyzer = () => {
                       <AlertCircle className="w-4 h-4 mr-2" />
                       Key Findings
                     </h4>
-                    <p className="text-white">{analyzedReport.findings}</p>
+                    <p className="text-white mb-2">{analyzedReport.findings}</p>
+                    {analyzedReport.details && (
+                      <p className="text-gray-300 text-sm">{analyzedReport.details}</p>
+                    )}
                   </div>
 
                   {/* Recommendation */}
@@ -212,20 +284,32 @@ const PDFAnalyzer = () => {
                       px-3 py-1 rounded-full text-sm font-medium
                       ${analyzedReport.severity === 'Moderate' 
                         ? 'bg-yellow-500/20 text-yellow-300' 
-                        : 'bg-red-500/20 text-red-300'
+                        : analyzedReport.severity === 'High'
+                        ? 'bg-red-500/20 text-red-300'
+                        : 'bg-green-500/20 text-green-300'
                       }
                     `}>
                       {analyzedReport.severity}
                     </span>
                   </div>
 
-                  {/* Action Button */}
-                  <Button 
-                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500"
-                    onClick={handleSaveToTimeline}
-                  >
-                    Save to Health Timeline
-                  </Button>
+                  {/* Action Buttons */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Button 
+                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500"
+                      onClick={handleSaveToTimeline}
+                    >
+                      Save to Health Timeline
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="border-green-400 text-green-400 hover:bg-green-400 hover:text-black"
+                      onClick={handleDownloadReport}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Report
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <div className="text-center py-12">
@@ -234,7 +318,7 @@ const PDFAnalyzer = () => {
                   </div>
                   <h4 className="text-xl text-gray-300 mb-2">Ready to Analyze</h4>
                   <p className="text-gray-400">
-                    Upload a medical report to see AI-powered insights about your recovery journey
+                    Upload a medical report or try a sample to see AI-powered insights about your recovery journey
                   </p>
                 </div>
               )}
@@ -256,7 +340,7 @@ const PDFAnalyzer = () => {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </div>
       </div>
     </div>
   );

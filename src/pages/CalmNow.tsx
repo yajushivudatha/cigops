@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw } from 'lucide-react';
@@ -11,16 +11,27 @@ const CalmNow = () => {
   const [phase, setPhase] = useState('');
   const [technique, setTechnique] = useState('');
   const { speak } = useVoiceSupport();
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Stop any current audio
+  const stopCurrentAudio = () => {
+    if (currentAudioRef.current) {
+      currentAudioRef.current.pause();
+      currentAudioRef.current.currentTime = 0;
+      currentAudioRef.current = null;
+    }
+  };
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
     if (isActive && timeLeft > 0) {
-      intervalId = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         setTimeLeft(prevTime => prevTime - 1);
       }, 1000);
     } else if (isActive && timeLeft === 0) {
-      clearInterval(intervalId);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
 
       if (technique === '478') {
         if (phase === 'Inhale') {
@@ -81,28 +92,35 @@ const CalmNow = () => {
       }
     }
 
-    return () => clearInterval(intervalId);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [isActive, timeLeft, phase, technique, speak]);
 
   const startBreathingExercise = (selectedTechnique: string) => {
+    // Stop any existing exercise first
+    stopExercise();
+    
     setTechnique(selectedTechnique);
     setIsActive(true);
     
     let introText = "";
     if (selectedTechnique === '478') {
-      introText = "Starting 4-7-8 breathing. This will help you relax deeply. Inhale for 4, hold for 7, exhale for 8.";
+      introText = "Starting 4-7-8 breathing. Find a comfortable position and close your eyes if you wish. Inhale for 4, hold for 7, exhale for 8. Let's begin.";
       setTimeLeft(4);
       setPhase('Inhale');
     } else if (selectedTechnique === 'box') {
-      introText = "Starting box breathing. This technique helps with focus and calm. Equal counts of 4 for each phase.";
+      introText = "Starting box breathing. This technique helps with focus and calm. We'll breathe in equal counts of 4. Get comfortable and let's begin.";
       setTimeLeft(4);
       setPhase('Inhale');
     } else if (selectedTechnique === 'equal') {
-      introText = "Starting equal breathing. This balances your nervous system with equal inhale and exhale.";
+      introText = "Starting equal breathing. This balances your nervous system with equal inhale and exhale. Find your rhythm and let's begin.";
       setTimeLeft(6);
       setPhase('Inhale');
     } else if (selectedTechnique === 'triangle') {
-      introText = "Starting triangle breathing. A simple 3-part breath to center yourself.";
+      introText = "Starting triangle breathing. A simple 3-part breath to center yourself. Relax your shoulders and let's begin.";
       setTimeLeft(4);
       setPhase('Inhale');
     }
@@ -114,7 +132,11 @@ const CalmNow = () => {
     setIsActive(false);
     setTimeLeft(0);
     setPhase('');
-    speak("Breathing exercise paused. Take a moment to notice how you feel.");
+    stopCurrentAudio();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    speak("Breathing exercise stopped. Take a moment to notice how you feel.");
   };
 
   const resetExercise = () => {
@@ -122,6 +144,10 @@ const CalmNow = () => {
     setTimeLeft(0);
     setPhase('');
     setTechnique('');
+    stopCurrentAudio();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
     speak("Exercise reset. Choose another technique when you're ready.");
   };
 
@@ -130,20 +156,20 @@ const CalmNow = () => {
       <div className="flex flex-col items-center justify-start p-4 min-h-screen">
         {/* Header */}
         <div className="text-center mb-8 mt-8">
-          <h1 className="text-4xl font-serif text-white mb-2 text-glow">
+          <h1 className="text-4xl font-serif text-white mb-2 text-glow animate-fade-in">
             Calm Your Mind 🧘
           </h1>
-          <p className="text-cyan-300 text-lg opacity-80">
+          <p className="text-cyan-300 text-lg opacity-80 animate-fade-in">
             You've resisted 3 cravings this week. Let's breathe together.
           </p>
         </div>
 
         {/* Main Breathing Circle */}
-        <div className="relative flex items-center justify-center mb-8">
+        <div className="relative flex items-center justify-center mb-8 animate-scale-in">
           {/* Breathing Circle */}
           <div className={`
             w-80 h-80 rounded-full border-4 border-cyan-400/50 flex items-center justify-center relative
-            ${isActive ? 'animate-breathe' : ''}
+            ${isActive ? 'animate-pulse' : ''}
           `}>
             {/* Inner Content */}
             <div className="text-center">
@@ -171,7 +197,7 @@ const CalmNow = () => {
                       onClick={stopExercise}
                       size="sm"
                       variant="outline"
-                      className="bg-red-500/20 border-red-500/50 text-red-300"
+                      className="bg-red-500/20 border-red-500/50 text-red-300 hover:bg-red-500/40"
                     >
                       <Pause className="w-4 h-4" />
                     </Button>
@@ -179,7 +205,7 @@ const CalmNow = () => {
                       onClick={resetExercise}
                       size="sm"
                       variant="outline"
-                      className="bg-gray-500/20 border-gray-500/50 text-gray-300"
+                      className="bg-gray-500/20 border-gray-500/50 text-gray-300 hover:bg-gray-500/40"
                     >
                       <RotateCcw className="w-4 h-4" />
                     </Button>
@@ -191,19 +217,19 @@ const CalmNow = () => {
 
           {/* Outer breathing rings */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-96 h-96 border border-cyan-400/20 rounded-full animate-breathe" style={{ animationDelay: '0.5s' }}></div>
+            <div className="w-96 h-96 border border-cyan-400/20 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-[28rem] h-[28rem] border border-cyan-400/10 rounded-full animate-breathe" style={{ animationDelay: '1s' }}></div>
+            <div className="w-[28rem] h-[28rem] border border-cyan-400/10 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
           </div>
         </div>
 
         {/* Additional Techniques */}
         {!isActive && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mb-8 animate-fade-in">
             <Button
               onClick={() => startBreathingExercise('478')}
-              className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 p-4 h-auto flex flex-col"
+              className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
             >
               <span className="font-semibold mb-1">4-7-8</span>
               <span className="text-xs opacity-80">Classic Relaxation</span>
@@ -211,7 +237,7 @@ const CalmNow = () => {
             
             <Button
               onClick={() => startBreathingExercise('box')}
-              className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50 p-4 h-auto flex flex-col"
+              className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
             >
               <span className="font-semibold mb-1">Box</span>
               <span className="text-xs opacity-80">4-4-4-4 Pattern</span>
@@ -219,7 +245,7 @@ const CalmNow = () => {
             
             <Button
               onClick={() => startBreathingExercise('equal')}
-              className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/50 p-4 h-auto flex flex-col"
+              className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
             >
               <span className="font-semibold mb-1">Equal</span>
               <span className="text-xs opacity-80">6-6 Balance</span>
@@ -227,7 +253,7 @@ const CalmNow = () => {
             
             <Button
               onClick={() => startBreathingExercise('triangle')}
-              className="bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/50 p-4 h-auto flex flex-col"
+              className="bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/50 p-4 h-auto flex flex-col transition-all duration-300 hover:scale-105"
             >
               <span className="font-semibold mb-1">Triangle</span>
               <span className="text-xs opacity-80">4-4-4 Pattern</span>
@@ -236,8 +262,8 @@ const CalmNow = () => {
         )}
 
         {/* Instructions */}
-        <div className="text-center max-w-md text-gray-400 text-sm mb-8">
-          <p>Choose a breathing technique above. Each one includes voice guidance to help you follow along.</p>
+        <div className="text-center max-w-md text-gray-400 text-sm mb-8 animate-fade-in">
+          <p>Choose a breathing technique above. Each one includes voice guidance to help you follow along. Make sure to find a quiet space for the best experience.</p>
         </div>
       </div>
     </div>
