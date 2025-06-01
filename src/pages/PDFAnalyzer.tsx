@@ -288,7 +288,7 @@ const PDFAnalyzer = () => {
                             <span className="text-gray-300 capitalize text-sm">
                               {key.replace(/([A-Z])/g, ' $1')}:
                             </span>
-                            <span className="text-white font-medium text-sm">{value}</span>
+                            <span className="text-white font-medium text-sm">{String(value)}</span>
                           </div>
                         ))}
                       </div>
