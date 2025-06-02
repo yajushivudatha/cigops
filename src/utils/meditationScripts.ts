@@ -1,49 +1,54 @@
 
 export interface MeditationScript {
   introduction: string;
-  cycles: string[];
+  cycles: Array<{
+    phase: 'inhale' | 'hold' | 'exhale' | 'pause';
+    duration: number;
+    instruction: string;
+  }>;
   conclusion: string;
+  totalCycles: number;
 }
 
 export const meditationScripts = {
   '478': {
-    introduction: "Begin.",
+    introduction: "Let's begin the 4-7-8 breathing technique. This will help calm your nervous system.",
     cycles: [
-      "Inhale — 2, 3, 4. Hold — 2, 3, 4, 5, 6, 7. Exhale — 2, 3, 4, 5, 6, 7, 8.",
-      "Again. Inhale — 2, 3, 4. Hold — 2, 3, 4, 5, 6, 7. Exhale — 2, 3, 4, 5, 6, 7, 8.",
-      "Keep going. Inhale — 2, 3, 4. Hold — 2, 3, 4, 5, 6, 7. Exhale — 2, 3, 4, 5, 6, 7, 8.",
-      "One more. Inhale — 2, 3, 4. Hold — 2, 3, 4, 5, 6, 7. Exhale — 2, 3, 4, 5, 6, 7, 8."
+      { phase: 'inhale', duration: 4, instruction: 'Breathe in through your nose' },
+      { phase: 'hold', duration: 7, instruction: 'Hold your breath' },
+      { phase: 'exhale', duration: 8, instruction: 'Exhale slowly through your mouth' }
     ],
-    conclusion: "Let your breath return to normal. Stay still. Notice the calm."
+    conclusion: "Let your breath return to normal. Notice the calm in your body.",
+    totalCycles: 4
   },
   box: {
-    introduction: "We will begin Box Breathing.",
+    introduction: "We'll practice Box Breathing - a technique used by Navy SEALs for focus and calm.",
     cycles: [
-      "Inhale — 2, 3, 4. Hold — 2, 3, 4. Exhale — 2, 3, 4. Hold — 2, 3, 4.",
-      "Inhale — 2, 3, 4. Hold — 2, 3, 4. Exhale — 2, 3, 4. Hold — 2, 3, 4.",
-      "Repeat this cycle. Keep your breath steady. Focus on the count.",
-      "Continue for five minutes."
+      { phase: 'inhale', duration: 4, instruction: 'Breathe in slowly' },
+      { phase: 'hold', duration: 4, instruction: 'Hold your breath' },
+      { phase: 'exhale', duration: 4, instruction: 'Exhale completely' },
+      { phase: 'hold', duration: 4, instruction: 'Hold empty' }
     ],
-    conclusion: "Now return to normal breathing."
+    conclusion: "Return to natural breathing. Feel the balance and control.",
+    totalCycles: 5
   },
   equal: {
-    introduction: "We will now begin Equal Breathing.",
+    introduction: "Equal Breathing helps balance your nervous system with equal inhale and exhale.",
     cycles: [
-      "Inhale — 2, 3, 4, 5, 6. Exhale — 2, 3, 4, 5, 6.",
-      "Inhale — 2, 3, 4, 5, 6. Exhale — 2, 3, 4, 5, 6.",
-      "Keep the breath smooth. No pauses.",
-      "Repeat for five minutes."
+      { phase: 'inhale', duration: 6, instruction: 'Breathe in steadily' },
+      { phase: 'exhale', duration: 6, instruction: 'Breathe out smoothly' }
     ],
-    conclusion: "Return to natural breath."
+    conclusion: "Continue this rhythm naturally. Feel the harmony in your breath.",
+    totalCycles: 8
   },
   triangle: {
-    introduction: "We now begin Triangle Breathing.",
+    introduction: "Triangle Breathing creates a steady, calming rhythm in three parts.",
     cycles: [
-      "Inhale — 2, 3, 4. Hold — 2, 3, 4. Exhale — 2, 3, 4.",
-      "Inhale — 2, 3, 4. Hold — 2, 3, 4. Exhale — 2, 3, 4.",
-      "Maintain rhythm.",
-      "Repeat for five minutes."
+      { phase: 'inhale', duration: 4, instruction: 'Breathe in deeply' },
+      { phase: 'hold', duration: 4, instruction: 'Hold with awareness' },
+      { phase: 'exhale', duration: 4, instruction: 'Release slowly' }
     ],
-    conclusion: "Return to normal breathing."
+    conclusion: "Feel the triangular flow settle into natural breath.",
+    totalCycles: 6
   }
 };

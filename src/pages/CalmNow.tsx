@@ -8,91 +8,124 @@ import { meditationScripts } from '@/utils/meditationScripts';
 
 const CalmNow = () => {
   const [isActive, setIsActive] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentCycle, setCurrentCycle] = useState(0);
+  const [currentPhase, setCurrentPhase] = useState(0);
+  const [countdown, setCountdown] = useState(0);
   const [technique, setTechnique] = useState('');
+  const [breathingPhase, setBreathingPhase] = useState('');
   const { speak, stopCurrentAudio } = useVoiceSupport();
-  const scriptTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const phaseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Cleanup on unmount - stop audio and timers
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopCurrentAudio();
-      if (scriptTimeoutRef.current) {
-        clearTimeout(scriptTimeoutRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (phaseTimeoutRef.current) clearTimeout(phaseTimeoutRef.current);
     };
   }, [stopCurrentAudio]);
 
-  const playMeditationScript = async (selectedTechnique: string) => {
+  const startBreathingCycle = (selectedTechnique: string) => {
     const script = meditationScripts[selectedTechnique as keyof typeof meditationScripts];
     if (!script) return;
 
-    setIsPlaying(true);
-    
-    // Stop any existing audio first
-    stopCurrentAudio();
-    if (scriptTimeoutRef.current) {
-      clearTimeout(scriptTimeoutRef.current);
-    }
+    // Stop any existing timers
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (phaseTimeoutRef.current) clearTimeout(phaseTimeoutRef.current);
 
-    // Play introduction
-    await new Promise(resolve => {
-      speak(script.introduction);
-      scriptTimeoutRef.current = setTimeout(resolve, 3000);
-    });
-
-    // Play each cycle with proper timing
-    for (let i = 0; i < script.cycles.length; i++) {
-      if (!isActive) break;
-      
-      setCurrentStep(i + 1);
-      await new Promise(resolve => {
-        speak(script.cycles[i]);
-        // Adjust timing based on script length
-        const timing = script.cycles[i].includes('—') ? 15000 : 5000;
-        scriptTimeoutRef.current = setTimeout(resolve, timing);
-      });
-    }
-
-    // Play conclusion
-    if (isActive) {
-      await new Promise(resolve => {
-        speak(script.conclusion);
-        scriptTimeoutRef.current = setTimeout(resolve, 5000);
-      });
-    }
-
-    setIsPlaying(false);
-    setCurrentStep(0);
-  };
-
-  const startBreathingExercise = (selectedTechnique: string) => {
-    // Stop any existing exercise and audio first
-    stopExercise();
-    
     setTechnique(selectedTechnique);
     setIsActive(true);
-    setCurrentStep(0);
-    
-    // Start the meditation script
-    playMeditationScript(selectedTechnique);
+    setCurrentCycle(0);
+    setCurrentPhase(0);
+
+    // Play introduction
+    speak(script.introduction);
+
+    // Start first cycle after introduction
+    setTimeout(() => {
+      if (isActive) {
+        runBreathingCycle(script, 0, 0);
+      }
+    }, 4000);
+  };
+
+  const runBreathingCycle = (script: any, cycleIndex: number, phaseIndex: number) => {
+    if (cycleIndex >= script.totalCycles) {
+      // Finish the session
+      setIsActive(false);
+      setCountdown(0);
+      setBreathingPhase('');
+      speak(script.conclusion);
+      return;
+    }
+
+    const currentPhaseData = script.cycles[phaseIndex];
+    if (!currentPhaseData) {
+      // Move to next cycle
+      runBreathingCycle(script, cycleIndex + 1, 0);
+      return;
+    }
+
+    setCurrentCycle(cycleIndex + 1);
+    setCurrentPhase(phaseIndex);
+    setBreathingPhase(currentPhaseData.instruction);
+    setCountdown(currentPhaseData.duration);
+
+    // Speak the instruction
+    speak(currentPhaseData.instruction);
+
+    // Start countdown
+    let timeLeft = currentPhaseData.duration;
+    intervalRef.current = setInterval(() => {
+      timeLeft--;
+      setCountdown(timeLeft);
+      
+      if (timeLeft <= 0) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        
+        // Move to next phase after a brief pause
+        phaseTimeoutRef.current = setTimeout(() => {
+          const nextPhaseIndex = (phaseIndex + 1) % script.cycles.length;
+          const nextCycleIndex = nextPhaseIndex === 0 ? cycleIndex + 1 : cycleIndex;
+          runBreathingCycle(script, nextCycleIndex, nextPhaseIndex);
+        }, 500);
+      }
+    }, 1000);
   };
 
   const stopExercise = () => {
     setIsActive(false);
-    setIsPlaying(false);
-    setCurrentStep(0);
+    setCurrentCycle(0);
+    setCurrentPhase(0);
+    setCountdown(0);
+    setBreathingPhase('');
     stopCurrentAudio();
     
-    if (scriptTimeoutRef.current) {
-      clearTimeout(scriptTimeoutRef.current);
-    }
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (phaseTimeoutRef.current) clearTimeout(phaseTimeoutRef.current);
   };
 
   const resetExercise = () => {
     stopExercise();
     setTechnique('');
+  };
+
+  const getBreathingCircleSize = () => {
+    if (!isActive) return 'w-80 h-80';
+    
+    const script = meditationScripts[technique as keyof typeof meditationScripts];
+    if (!script) return 'w-80 h-80';
+    
+    const currentPhaseData = script.cycles[currentPhase];
+    if (!currentPhaseData) return 'w-80 h-80';
+    
+    if (currentPhaseData.phase === 'inhale') {
+      return 'w-96 h-96'; // Expand on inhale
+    } else if (currentPhaseData.phase === 'exhale') {
+      return 'w-64 h-64'; // Contract on exhale
+    }
+    return 'w-80 h-80'; // Default for hold phases
   };
 
   return (
@@ -112,7 +145,8 @@ const CalmNow = () => {
         <div className="relative flex items-center justify-center mb-8 animate-scale-in">
           {/* Breathing Circle */}
           <div className={`
-            w-80 h-80 rounded-full border-4 border-cyan-400/50 flex items-center justify-center relative
+            ${getBreathingCircleSize()} rounded-full border-4 border-cyan-400/50 flex items-center justify-center relative
+            transition-all duration-1000 ease-in-out
             ${isActive ? 'animate-pulse' : ''}
           `}>
             {/* Inner Content */}
@@ -135,10 +169,13 @@ const CalmNow = () => {
                      technique === 'triangle' ? 'Triangle' : technique}
                   </div>
                   <div className="text-lg text-white mb-2">
-                    Step {currentStep}
+                    Cycle {currentCycle}
                   </div>
-                  <div className="text-sm text-cyan-300 mb-4">
-                    {isPlaying ? 'Listening to guidance...' : 'In progress...'}
+                  <div className="text-sm text-cyan-300 mb-2">
+                    {breathingPhase}
+                  </div>
+                  <div className="text-4xl font-bold text-white mb-4">
+                    {countdown}
                   </div>
                   <div className="space-x-2">
                     <Button
@@ -177,7 +214,7 @@ const CalmNow = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mb-8 animate-fade-in">
             <div className="text-center">
               <Button
-                onClick={() => startBreathingExercise('478')}
+                onClick={() => startBreathingCycle('478')}
                 className="w-20 h-20 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/50 transition-all duration-300 hover:scale-105 mb-2"
               >
                 <span className="text-xs font-semibold">4-7-8</span>
@@ -187,7 +224,7 @@ const CalmNow = () => {
             
             <div className="text-center">
               <Button
-                onClick={() => startBreathingExercise('box')}
+                onClick={() => startBreathingCycle('box')}
                 className="w-20 h-20 rounded-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/50 transition-all duration-300 hover:scale-105 mb-2"
               >
                 <span className="text-xs font-semibold">Box</span>
@@ -197,7 +234,7 @@ const CalmNow = () => {
             
             <div className="text-center">
               <Button
-                onClick={() => startBreathingExercise('equal')}
+                onClick={() => startBreathingCycle('equal')}
                 className="w-20 h-20 rounded-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/50 transition-all duration-300 hover:scale-105 mb-2"
               >
                 <span className="text-xs font-semibold">Equal</span>
@@ -207,7 +244,7 @@ const CalmNow = () => {
             
             <div className="text-center">
               <Button
-                onClick={() => startBreathingExercise('triangle')}
+                onClick={() => startBreathingCycle('triangle')}
                 className="w-20 h-20 rounded-full bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-500/50 transition-all duration-300 hover:scale-105 mb-2"
               >
                 <span className="text-xs font-semibold">Triangle</span>
@@ -219,7 +256,7 @@ const CalmNow = () => {
 
         {/* Instructions */}
         <div className="text-center max-w-md text-gray-400 text-sm mb-8 animate-fade-in">
-          <p>Choose a breathing technique above. Each one includes voice guidance to help you follow along. Make sure to find a quiet space for the best experience.</p>
+          <p>Choose a breathing technique above. Each one includes voice guidance and visual countdown to help you follow along perfectly.</p>
         </div>
       </div>
     </div>
