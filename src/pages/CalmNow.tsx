@@ -13,6 +13,12 @@ const CalmNow = () => {
   const { speak, stopCurrentAudio } = useVoiceSupport();
   const scriptTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const isActiveRef = useRef(false);
+
+  // Update ref when isActive changes
+  useEffect(() => {
+    isActiveRef.current = isActive;
+  }, [isActive]);
 
   // Cleanup on unmount - stop audio and timers
   useEffect(() => {
@@ -23,6 +29,24 @@ const CalmNow = () => {
       }
     };
   }, [stopCurrentAudio]);
+
+  // Stop everything when leaving the page
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      stopCurrentAudio();
+      if (scriptTimeoutRef.current) {
+        clearTimeout(scriptTimeoutRef.current);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      handleBeforeUnload();
+    };
+  }, [stopCurrentAudio]);
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const playMeditationScript = async (selectedTechnique: string) => {
     const script = meditationScripts[selectedTechnique as keyof typeof meditationScripts];
@@ -36,35 +60,46 @@ const CalmNow = () => {
       clearTimeout(scriptTimeoutRef.current);
     }
 
-    // Play introduction
-    await new Promise(resolve => {
-      speak(script.introduction);
-      scriptTimeoutRef.current = setTimeout(resolve, 3000);
-    });
+    try {
+      // Play introduction
+      if (!isActiveRef.current) return;
+      await speak(script.introduction);
+      await sleep(4000);
 
-    // Play each cycle with proper timing
-    for (let i = 0; i < script.cycles.length; i++) {
-      if (!isActive) break;
-      
-      setCurrentStep(i + 1);
-      await new Promise(resolve => {
-        speak(script.cycles[i]);
-        // Adjust timing based on script length
-        const timing = script.cycles[i].includes('—') ? 15000 : 5000;
-        scriptTimeoutRef.current = setTimeout(resolve, timing);
-      });
+      // Play each cycle with proper timing
+      for (let i = 0; i < script.cycles.length; i++) {
+        if (!isActiveRef.current) break;
+        
+        setCurrentStep(i + 1);
+        await speak(script.cycles[i]);
+        
+        // Different timing based on the type of instruction
+        if (script.cycles[i].includes('1, 2, 3, 4, 5, 6, 7, 8')) {
+          await sleep(12000); // 8-count breathing needs more time
+        } else if (script.cycles[i].includes('1, 2, 3, 4, 5, 6, 7')) {
+          await sleep(10000); // 7-count hold needs time
+        } else if (script.cycles[i].includes('1, 2, 3, 4, 5, 6')) {
+          await sleep(8000); // 6-count breathing
+        } else if (script.cycles[i].includes('1, 2, 3, 4')) {
+          await sleep(6000); // 4-count breathing
+        } else {
+          await sleep(4000); // Instructions without counting
+        }
+      }
+
+      // Play conclusion
+      if (isActiveRef.current) {
+        await speak(script.conclusion);
+        await sleep(5000);
+      }
+    } catch (error) {
+      console.log('Meditation interrupted:', error);
     }
 
-    // Play conclusion
-    if (isActive) {
-      await new Promise(resolve => {
-        speak(script.conclusion);
-        scriptTimeoutRef.current = setTimeout(resolve, 5000);
-      });
+    if (isActiveRef.current) {
+      setIsPlaying(false);
+      setCurrentStep(0);
     }
-
-    setIsPlaying(false);
-    setCurrentStep(0);
   };
 
   const startBreathingExercise = (selectedTechnique: string) => {

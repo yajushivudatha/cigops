@@ -51,13 +51,13 @@ const GreetingScreen = ({ onTransition }: GreetingScreenProps) => {
             Welcome to your recovery journey
           </p>
           
-          {/* Transition Button */}
+          {/* Transparent Transition Button */}
           {showButton && (
             <div className="mt-8 animate-fade-in">
               <Button
                 onClick={onTransition}
                 size="lg"
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-8 py-4 rounded-full shadow-2xl shadow-cyan-500/30 transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/50"
+                className="bg-transparent border-2 border-cyan-400/50 hover:bg-cyan-500/20 text-cyan-300 hover:text-white px-8 py-4 rounded-full shadow-2xl shadow-cyan-500/30 transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/50 backdrop-blur-sm"
               >
                 Enter Dashboard
                 <ArrowRight className="w-5 h-5 ml-2" />

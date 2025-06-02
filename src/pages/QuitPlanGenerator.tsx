@@ -1,325 +1,171 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar, Target, User, Lightbulb } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar, Clock, Target, Heart } from 'lucide-react';
 
 const QuitPlanGenerator = () => {
-  const [formData, setFormData] = useState({
-    name: 'Alex',
-    currentUsage: '',
-    quitDate: '',
-    motivation: '',
-    triggers: '',
-    supportSystem: ''
-  });
-  const [generatedPlan, setGeneratedPlan] = useState(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const { toast } = useToast();
+  const [startDate, setStartDate] = useState('');
+  const [quitTime, setQuitTime] = useState('');
+  const [reason, setReason] = useState('');
+  const [triggers, setTriggers] = useState('');
+  const [strategies, setStrategies] = useState('');
+  const [supportSystem, setSupportSystem] = useState('');
+  const [reward, setReward] = useState('');
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const generatePlan = async () => {
-    if (!formData.currentUsage || !formData.quitDate) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in your current usage and quit date.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsGenerating(true);
-    
-    // Generate actual personalized plan based on user input
-    setTimeout(() => {
-      const quitDateObj = new Date(formData.quitDate);
-      const today = new Date();
-      const daysUntilQuit = Math.ceil((quitDateObj.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-      
-      const plan = {
-        quitDate: formData.quitDate,
-        name: formData.name,
-        currentUsage: formData.currentUsage,
-        motivation: formData.motivation,
-        phases: [
-          {
-            phase: "Preparation Phase",
-            duration: `${Math.max(1, daysUntilQuit)} days before quit date`,
-            tasks: [
-              `Remove all smoking materials from home and car`,
-              `Tell ${formData.supportSystem || 'family and friends'} about your quit date: ${formData.quitDate}`,
-              `Stock up on nicotine patches/gum if planning to use them`,
-              `Prepare alternatives for your triggers: ${formData.triggers || 'stress and social situations'}`,
-              `Practice breathing exercises daily using this app`,
-              `Write down your motivation: "${formData.motivation || 'better health'}"`
-            ]
-          },
-          {
-            phase: "Quit Day",
-            duration: "Day 1",
-            tasks: [
-              `Start your morning with meditation and remember: "${formData.motivation}"`,
-              `Use this app's voice guidance feature whenever you feel cravings`,
-              `Stay hydrated - drink 8 glasses of water`,
-              `Contact ${formData.supportSystem || 'your support person'} when tempted`,
-              `Celebrate each hour smoke-free - you're doing this!`,
-              `If using nicotine patches, apply your first one in the morning`
-            ]
-          },
-          {
-            phase: "Early Recovery",
-            duration: "Days 2-7",
-            tasks: [
-              `Continue using voice coaching during strong cravings`,
-              `Take short walks when facing your triggers: ${formData.triggers || 'stress'}`,
-              `Practice the 4-7-8 breathing technique from the app`,
-              `Check in with ${formData.supportSystem || 'your support network'} daily`,
-              `Reward yourself for each smoke-free day`,
-              `If using nicotine replacement, follow the recommended schedule`
-            ]
-          },
-          {
-            phase: "Stabilization",
-            duration: "Weeks 2-4",
-            tasks: [
-              `Establish new routines to replace smoking habits`,
-              `Continue using this app for motivation and support`,
-              `Exercise regularly to manage stress and improve health`,
-              `Avoid or modify situations related to: ${formData.triggers || 'your triggers'}`,
-              `Consider professional counseling if cravings are intense`,
-              `Gradually reduce nicotine replacement if using`
-            ]
-          }
-        ],
-        emergencyContacts: [
-          "Crisis Helpline: 9152987821",
-          `Your Support Person: ${formData.supportSystem || '(Add contact)'}`,
-          "Mental Health Helpline: 1860-2662-345"
-        ],
-        dailyGoals: [
-          "Use breathing exercises 3 times daily",
-          "Log mood and cravings in the app",
-          "Drink 8 glasses of water",
-          "Take a 15-minute walk",
-          `Remember your motivation: "${formData.motivation || 'your health and future'}"`
-        ],
-        nicotineAdvice: `Since you currently use ${formData.currentUsage}, consider nicotine patches or gum to manage withdrawal. Start with the highest strength and gradually reduce over 8-12 weeks. Patches provide steady nicotine release, while gum gives you control during cravings.`
-      };
-      
-      setGeneratedPlan(plan);
-      setIsGenerating(false);
-      
-      toast({
-        title: "Personalized Plan Generated!",
-        description: `Your custom quit plan for ${formData.name} is ready.`
-      });
-    }, 2000);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log('Form submitted:', {
+      startDate,
+      quitTime,
+      reason,
+      triggers,
+      strategies,
+      supportSystem,
+      reward,
+    });
   };
 
   return (
-    <div className="min-h-screen p-4 pt-20 bg-black">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-4xl font-serif text-white mb-4 text-glow">
-            Quit Plan Generator 📋
-          </h1>
-          <p className="text-cyan-300 text-lg opacity-80">
-            Create your personalized recovery roadmap
-          </p>
-        </div>
+    <div className="min-h-screen bg-black relative overflow-y-auto pb-16">
+      {/* Breathing Bubbles Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-20 left-20 w-32 h-32 bg-cyan-500/20 rounded-full animate-breathe"></div>
+        <div className="absolute top-1/3 right-32 w-24 h-24 bg-blue-500/15 rounded-full animate-breathe" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-purple-500/10 rounded-full animate-breathe" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-28 h-28 bg-teal-500/15 rounded-full animate-breathe" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute bottom-1/4 right-1/4 w-36 h-36 bg-indigo-500/10 rounded-full animate-breathe" style={{ animationDelay: '0.5s' }}></div>
+      </div>
 
-        {!generatedPlan ? (
-          /* Form Section */
-          <Card className="glass-card p-8 animate-scale-in">
+      <div className="relative z-10 p-4">
+        <div className="max-w-3xl mx-auto">
+          <Card className="glass-card animate-fade-in">
             <CardHeader>
-              <CardTitle className="text-white text-2xl flex items-center">
-                <User className="w-6 h-6 mr-3 text-cyan-400" />
-                Tell us about your journey
+              <CardTitle className="text-2xl font-semibold text-white">
+                <Target className="mr-2 inline-block h-6 w-6 text-cyan-400 align-middle" />
+                Create Your Personalized Quit Plan
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+            <CardContent className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="name" className="text-white">Name</Label>
+                  <Label htmlFor="startDate" className="text-gray-300">
+                    <Calendar className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    Start Date
+                  </Label>
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="glass-card border-white/20 text-white"
+                    type="date"
+                    id="startDate"
+                    className="bg-black/50 border-cyan-500 text-white"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="usage" className="text-white">Current usage (per day)</Label>
+                  <Label htmlFor="quitTime" className="text-gray-300">
+                    <Clock className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    Quit Time
+                  </Label>
                   <Input
-                    id="usage"
-                    placeholder="e.g., 10 cigarettes, 2 vapes"
-                    value={formData.currentUsage}
-                    onChange={(e) => handleInputChange('currentUsage', e.target.value)}
-                    className="glass-card border-white/20 text-white"
+                    type="time"
+                    id="quitTime"
+                    className="bg-black/50 border-cyan-500 text-white"
+                    value={quitTime}
+                    onChange={(e) => setQuitTime(e.target.value)}
+                    required
                   />
                 </div>
-              </div>
-
-              <div>
-                <Label htmlFor="quitDate" className="text-white">Target Quit Date</Label>
-                <Input
-                  id="quitDate"
-                  type="date"
-                  value={formData.quitDate}
-                  onChange={(e) => handleInputChange('quitDate', e.target.value)}
-                  className="glass-card border-white/20 text-white"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="motivation" className="text-white">What motivates you to quit?</Label>
-                <Input
-                  id="motivation"
-                  placeholder="e.g., Health, family, money"
-                  value={formData.motivation}
-                  onChange={(e) => handleInputChange('motivation', e.target.value)}
-                  className="glass-card border-white/20 text-white"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="triggers" className="text-white">What are your main triggers?</Label>
-                <Input
-                  id="triggers"
-                  placeholder="e.g., Stress, social situations, after meals"
-                  value={formData.triggers}
-                  onChange={(e) => handleInputChange('triggers', e.target.value)}
-                  className="glass-card border-white/20 text-white"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="support" className="text-white">Who's in your support system?</Label>
-                <Input
-                  id="support"
-                  placeholder="e.g., Family, friends, counselor"
-                  value={formData.supportSystem}
-                  onChange={(e) => handleInputChange('supportSystem', e.target.value)}
-                  className="glass-card border-white/20 text-white"
-                />
-              </div>
-
-              <Button
-                onClick={generatePlan}
-                disabled={isGenerating}
-                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 py-6 text-lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <Lightbulb className="w-5 h-5 mr-2 animate-pulse" />
-                    Generating Your Plan...
-                  </>
-                ) : (
-                  <>
-                    <Target className="w-5 h-5 mr-2" />
-                    Generate My Quit Plan
-                  </>
-                )}
-              </Button>
+                <div>
+                  <Label htmlFor="reason" className="text-gray-300">
+                    <Heart className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    Your Reason for Quitting
+                  </Label>
+                  <Textarea
+                    id="reason"
+                    className="bg-black/50 border-cyan-500 text-white resize-none"
+                    placeholder="Write down your most important reasons for quitting."
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="triggers" className="text-gray-300">
+                    <Zap className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    Identify Your Triggers
+                  </Label>
+                  <Textarea
+                    id="triggers"
+                    className="bg-black/50 border-cyan-500 text-white resize-none"
+                    placeholder="List situations, feelings, or people that trigger your cravings."
+                    value={triggers}
+                    onChange={(e) => setTriggers(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="strategies" className="text-gray-300">
+                    <Brain className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    Coping Strategies
+                  </Label>
+                  <Textarea
+                    id="strategies"
+                    className="bg-black/50 border-cyan-500 text-white resize-none"
+                    placeholder="Describe strategies to cope with cravings and triggers."
+                    value={strategies}
+                    onChange={(e) => setStrategies(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="supportSystem" className="text-gray-300">
+                    <Users className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    Your Support System
+                  </Label>
+                  <Textarea
+                    id="supportSystem"
+                    className="bg-black/50 border-cyan-500 text-white resize-none"
+                    placeholder="List people who will support you during this process."
+                    value={supportSystem}
+                    onChange={(e) => setSupportSystem(e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="reward" className="text-gray-300">
+                    <Gift className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    Your Reward
+                  </Label>
+                  <Textarea
+                    id="reward"
+                    className="bg-black/50 border-cyan-500 text-white resize-none"
+                    placeholder="What will you reward yourself with when you reach milestones?"
+                    value={reward}
+                    onChange={(e) => setReward(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button className="w-full bg-cyan-500 hover:bg-cyan-400 text-white">
+                  Generate My Quit Plan
+                </Button>
+              </form>
             </CardContent>
           </Card>
-        ) : (
-          /* Generated Plan Display */
-          <div className="space-y-6 animate-fade-in">
-            <Card className="glass-card p-6">
-              <CardHeader>
-                <CardTitle className="text-white text-2xl flex items-center">
-                  <Calendar className="w-6 h-6 mr-3 text-green-400" />
-                  {generatedPlan.name}'s Personalized Quit Plan
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4 mb-6">
-                  <p className="text-cyan-300">
-                    Quit Date: <span className="font-bold text-white">{generatedPlan.quitDate}</span>
-                  </p>
-                  <p className="text-cyan-300">
-                    Current Usage: <span className="font-bold text-white">{generatedPlan.currentUsage}</span>
-                  </p>
-                </div>
-                
-                {/* Nicotine Replacement Advice */}
-                <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <h3 className="text-blue-300 font-semibold mb-3">💊 Nicotine Replacement Therapy Guide</h3>
-                  <p className="text-white text-sm">{generatedPlan.nicotineAdvice}</p>
-                </div>
-                
-                {/* Daily Goals */}
-                <div className="mb-6 p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
-                  <h3 className="text-cyan-300 font-semibold mb-3">🎯 Daily Goals</h3>
-                  <ul className="space-y-2">
-                    {generatedPlan.dailyGoals.map((goal, index) => (
-                      <li key={index} className="text-white flex items-center">
-                        <div className="w-2 h-2 bg-cyan-400 rounded-full mr-2"></div>
-                        {goal}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Emergency Contacts */}
-                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <h3 className="text-red-300 font-semibold mb-3">🚨 Emergency Contacts</h3>
-                  <ul className="space-y-2">
-                    {generatedPlan.emergencyContacts.map((contact, index) => (
-                      <li key={index} className="text-white">
-                        {contact}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Plan Phases */}
-            {generatedPlan.phases.map((phase, index) => (
-              <Card key={index} className="glass-card animate-slide-up" style={{ animationDelay: `${index * 0.1}s` }}>
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center">
-                    <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">
-                      {index + 1}
-                    </div>
-                    {phase.phase}
-                    <span className="ml-auto text-sm text-cyan-400">{phase.duration}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {phase.tasks.map((task, taskIndex) => (
-                      <li key={taskIndex} className="text-gray-300 flex items-start">
-                        <div className="w-2 h-2 bg-green-400 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                        {task}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
-
-            <Button
-              onClick={() => setGeneratedPlan(null)}
-              variant="outline"
-              className="w-full glass-card border-white/20 hover:border-cyan-400/50 hover:bg-cyan-500/10"
-            >
-              Create New Plan
-            </Button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default QuitPlanGenerator;
+
+// Dummy components for icons
+const Zap = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 11 14 11 22 21 10 13 10 13 2"/></svg>;
+const Brain = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-brain"><path d="M15 13v-1.5a2.5 2.5 0 0 0-5 0V13"/><path d="M2 9a5 5 0 0 1 5-5l2 3a3 3 0 0 0 6 0l2-3a5 5 0 0 1 5 5v3.5a5.5 5.5 0 0 1-3 5.1L12 22l-6.1-3.4A5.5 5.5 0 0 1 2 12.5V9Z"/></svg>;
+const Users = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+const Gift = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-gift"><rect width="20" height="12" x="2" y="7"/><path d="M12 22v-5"/><path d="M2 17h20"/><path d="M7 2a5 5 0 0 1 10 0"/></svg>;
