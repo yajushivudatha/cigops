@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -96,7 +97,7 @@ const QuitPlanGenerator = () => {
                 </div>
                 <div>
                   <Label htmlFor="triggers" className="text-gray-300">
-                    <Zap className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    <Zap />
                     Identify Your Triggers
                   </Label>
                   <Textarea
@@ -110,7 +111,7 @@ const QuitPlanGenerator = () => {
                 </div>
                 <div>
                   <Label htmlFor="strategies" className="text-gray-300">
-                    <Brain className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    <Brain />
                     Coping Strategies
                   </Label>
                   <Textarea
@@ -124,7 +125,7 @@ const QuitPlanGenerator = () => {
                 </div>
                 <div>
                   <Label htmlFor="supportSystem" className="text-gray-300">
-                    <Users className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    <Users />
                     Your Support System
                   </Label>
                   <Textarea
@@ -138,7 +139,7 @@ const QuitPlanGenerator = () => {
                 </div>
                 <div>
                   <Label htmlFor="reward" className="text-gray-300">
-                    <Gift className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
+                    <Gift />
                     Your Reward
                   </Label>
                   <Textarea
@@ -165,7 +166,7 @@ const QuitPlanGenerator = () => {
 export default QuitPlanGenerator;
 
 // Dummy components for icons
-const Zap = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 11 14 11 22 21 10 13 10 13 2"/></svg>;
-const Brain = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-brain"><path d="M15 13v-1.5a2.5 2.5 0 0 0-5 0V13"/><path d="M2 9a5 5 0 0 1 5-5l2 3a3 3 0 0 0 6 0l2-3a5 5 0 0 1 5 5v3.5a5.5 5.5 0 0 1-3 5.1L12 22l-6.1-3.4A5.5 5.5 0 0 1 2 12.5V9Z"/></svg>;
-const Users = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
-const Gift = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-gift"><rect width="20" height="12" x="2" y="7"/><path d="M12 22v-5"/><path d="M2 17h20"/><path d="M7 2a5 5 0 0 1 10 0"/></svg>;
+const Zap = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap mr-2 inline-block h-4 w-4 text-cyan-300 align-middle"><polygon points="13 2 3 14 11 14 11 22 21 10 13 10 13 2"/></svg>;
+const Brain = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-brain mr-2 inline-block h-4 w-4 text-cyan-300 align-middle"><path d="M15 13v-1.5a2.5 2.5 0 0 0-5 0V13"/><path d="M2 9a5 5 0 0 1 5-5l2 3a3 3 0 0 0 6 0l2-3a5 5 0 0 1 5 5v3.5a5.5 5.5 0 0 1-3 5.1L12 22l-6.1-3.4A5.5 5.5 0 0 1 2 12.5V9Z"/></svg>;
+const Users = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users mr-2 inline-block h-4 w-4 text-cyan-300 align-middle"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+const Gift = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-gift mr-2 inline-block h-4 w-4 text-cyan-300 align-middle"><rect width="20" height="12" x="2" y="7"/><path d="M12 22v-5"/><path d="M2 17h20"/><path d="M7 2a5 5 0 0 1 10 0"/></svg>;

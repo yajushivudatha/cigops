@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Phone, Video, Stethoscope, Pills, Heart, Activity } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Video, Stethoscope, Pill, Heart, Activity } from 'lucide-react';
 
 const ClinicalSupport = () => {
   const [appointmentDate, setAppointmentDate] = useState('');
