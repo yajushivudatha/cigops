@@ -5,29 +5,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Target, Heart, Zap, Brain, Users, Gift } from 'lucide-react';
+import { User } from 'lucide-react';
 
 const QuitPlanGenerator = () => {
-  const [startDate, setStartDate] = useState('');
-  const [quitTime, setQuitTime] = useState('');
-  const [reason, setReason] = useState('');
-  const [triggers, setTriggers] = useState('');
+  const [name, setName] = useState('Alex');
+  const [currentUsage, setCurrentUsage] = useState('');
+  const [quitDate, setQuitDate] = useState('22-07-2025');
+  const [motivation, setMotivation] = useState('Family');
+  const [triggers, setTriggers] = useState('Stress');
   const [strategies, setStrategies] = useState('');
-  const [supportSystem, setSupportSystem] = useState('');
-  const [reward, setReward] = useState('');
+  const [notes, setNotes] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
     console.log('Form submitted:', {
-      startDate,
-      quitTime,
-      reason,
+      name,
+      currentUsage,
+      quitDate,
+      motivation,
       triggers,
       strategies,
-      supportSystem,
-      reward,
+      notes,
     });
   };
 
@@ -43,115 +41,128 @@ const QuitPlanGenerator = () => {
       </div>
 
       <div className="relative z-10 p-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-serif text-white mb-2 text-glow animate-fade-in">
+              Quit Plan Generator 📋
+            </h1>
+            <p className="text-cyan-300 text-lg opacity-80 animate-fade-in">
+              Create your personalized recovery roadmap
+            </p>
+          </div>
+
+          {/* Main Form Card */}
           <Card className="glass-card animate-fade-in">
             <CardHeader>
-              <CardTitle className="text-2xl font-semibold text-white">
-                <Target className="mr-2 inline-block h-6 w-6 text-cyan-400 align-middle" />
-                Create Your Personalized Quit Plan
+              <CardTitle className="text-xl font-semibold text-white flex items-center">
+                <User className="w-5 h-5 mr-3 text-cyan-400" />
+                Tell us about your journey
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="name" className="text-gray-300 mb-2 block">
+                      Name
+                    </Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="bg-gray-800/50 border-gray-700 text-white"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="currentUsage" className="text-gray-300 mb-2 block">
+                      Current usage (per day)
+                    </Label>
+                    <Input
+                      id="currentUsage"
+                      type="text"
+                      value={currentUsage}
+                      onChange={(e) => setCurrentUsage(e.target.value)}
+                      className="bg-gray-800/50 border-gray-700 text-white"
+                      placeholder="e.g., 10 cigarettes, 2 vapes"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <Label htmlFor="startDate" className="text-gray-300">
-                    <Calendar className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
-                    Start Date
+                  <Label htmlFor="quitDate" className="text-gray-300 mb-2 block">
+                    Target Quit Date
                   </Label>
                   <Input
-                    type="date"
-                    id="startDate"
-                    className="bg-black/50 border-cyan-500 text-white"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    required
+                    id="quitDate"
+                    type="text"
+                    value={quitDate}
+                    onChange={(e) => setQuitDate(e.target.value)}
+                    className="bg-gray-800/50 border-gray-700 text-white"
+                    placeholder="DD-MM-YYYY"
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="quitTime" className="text-gray-300">
-                    <Clock className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
-                    Quit Time
-                  </Label>
-                  <Input
-                    type="time"
-                    id="quitTime"
-                    className="bg-black/50 border-cyan-500 text-white"
-                    value={quitTime}
-                    onChange={(e) => setQuitTime(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="reason" className="text-gray-300">
-                    <Heart className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
-                    Your Reason for Quitting
+                  <Label htmlFor="motivation" className="text-gray-300 mb-2 block">
+                    What motivates you to quit?
                   </Label>
                   <Textarea
-                    id="reason"
-                    className="bg-black/50 border-cyan-500 text-white resize-none"
-                    placeholder="Write down your most important reasons for quitting."
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    required
+                    id="motivation"
+                    value={motivation}
+                    onChange={(e) => setMotivation(e.target.value)}
+                    className="bg-gray-800/50 border-gray-700 text-white resize-none"
+                    placeholder="Family, health, money, etc."
+                    rows={3}
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="triggers" className="text-gray-300">
-                    <Zap className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
-                    Identify Your Triggers
+                  <Label htmlFor="triggers" className="text-gray-300 mb-2 block">
+                    What are your main triggers?
                   </Label>
                   <Textarea
                     id="triggers"
-                    className="bg-black/50 border-cyan-500 text-white resize-none"
-                    placeholder="List situations, feelings, or people that trigger your cravings."
                     value={triggers}
                     onChange={(e) => setTriggers(e.target.value)}
-                    required
+                    className="bg-gray-800/50 border-gray-700 text-white resize-none"
+                    placeholder="Stress, social situations, work breaks, etc."
+                    rows={3}
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="strategies" className="text-gray-300">
-                    <Brain className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
-                    Coping Strategies
+                  <Label htmlFor="strategies" className="text-gray-300 mb-2 block">
+                    What strategies will you use?
                   </Label>
                   <Textarea
                     id="strategies"
-                    className="bg-black/50 border-cyan-500 text-white resize-none"
-                    placeholder="Describe strategies to cope with cravings and triggers."
                     value={strategies}
                     onChange={(e) => setStrategies(e.target.value)}
-                    required
+                    className="bg-gray-800/50 border-gray-700 text-white resize-none"
+                    placeholder="Breathing exercises, gum, support groups, etc."
+                    rows={3}
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="supportSystem" className="text-gray-300">
-                    <Users className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
-                    Your Support System
+                  <Label htmlFor="notes" className="text-gray-300 mb-2 block">
+                    Additional notes
                   </Label>
                   <Textarea
-                    id="supportSystem"
-                    className="bg-black/50 border-cyan-500 text-white resize-none"
-                    placeholder="List people who will support you during this process."
-                    value={supportSystem}
-                    onChange={(e) => setSupportSystem(e.target.value)}
-                    required
+                    id="notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="bg-gray-800/50 border-gray-700 text-white resize-none"
+                    placeholder="Any other thoughts or goals..."
+                    rows={3}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="reward" className="text-gray-300">
-                    <Gift className="mr-2 inline-block h-4 w-4 text-cyan-300 align-middle" />
-                    Your Reward
-                  </Label>
-                  <Textarea
-                    id="reward"
-                    className="bg-black/50 border-cyan-500 text-white resize-none"
-                    placeholder="What will you reward yourself with when you reach milestones?"
-                    value={reward}
-                    onChange={(e) => setReward(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button className="w-full bg-cyan-500 hover:bg-cyan-400 text-white">
+
+                <Button type="submit" className="w-full bg-cyan-500 hover:bg-cyan-600 text-white">
                   Generate My Quit Plan
                 </Button>
               </form>

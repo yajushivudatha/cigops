@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Phone, Video, Stethoscope, Pill, Heart, Activity } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Video, Stethoscope, Heart, Activity } from 'lucide-react';
 
 const ClinicalSupport = () => {
   const [appointmentDate, setAppointmentDate] = useState('');
@@ -45,167 +45,139 @@ const ClinicalSupport = () => {
       </div>
 
       <div className="relative z-10 p-4">
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center">
+          <div className="text-center mb-12">
             <h1 className="text-4xl font-serif text-white mb-2 text-glow animate-fade-in">
               Clinical Support 🩺
             </h1>
             <p className="text-cyan-300 text-lg opacity-80 animate-fade-in">
-              Connect with healthcare professionals and manage your clinical information.
+              Find immediate professional help near you
             </p>
           </div>
 
-          {/* Quick Access Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-            {/* Find a Doctor */}
-            <Card className="glass-card">
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Treatment Centers Near You */}
+            <Card className="glass-card animate-fade-in">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold flex items-center space-x-2">
-                  <Stethoscope className="w-5 h-5 text-blue-400" />
-                  <span>Find a Doctor</span>
+                <CardTitle className="text-xl font-semibold text-white flex items-center">
+                  <MapPin className="w-5 h-5 mr-3 text-blue-400" />
+                  Treatment Centers Near You
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-300">
-                  Search for healthcare providers and specialists in your area.
-                </p>
-                <Button variant="secondary" className="mt-4 w-full">
-                  Search Now
-                </Button>
+                {/* Map placeholder */}
+                <div className="bg-gray-800/50 h-64 rounded-lg mb-4 flex items-center justify-center">
+                  <p className="text-gray-400">Map showing nearby treatment centers</p>
+                </div>
+                
+                {/* Treatment Centers List */}
+                <div className="space-y-4">
+                  <Card className="bg-gray-800/30 border-gray-700">
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="text-white font-semibold">Apollo Wellness Center</h4>
+                        <Badge className="bg-green-500/20 text-green-400">24/7</Badge>
+                      </div>
+                      <p className="text-gray-400 text-sm mb-2">📍 123 MG Road, Bangalore</p>
+                      <div className="flex items-center space-x-4 text-sm text-gray-300 mb-3">
+                        <span>⭐ 4.8</span>
+                        <span>⏰ 24/7</span>
+                        <span>📏 0.8 km</span>
+                      </div>
+                      <div className="flex space-x-2 mb-3">
+                        <Badge variant="outline" className="text-cyan-400 border-cyan-400 text-xs">Addiction Recovery</Badge>
+                        <Badge variant="outline" className="text-blue-400 border-blue-400 text-xs">Mental Health</Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button className="bg-green-500 hover:bg-green-600 text-white text-sm">
+                          <Phone className="w-3 h-3 mr-1" />
+                          Call Now
+                        </Button>
+                        <Button variant="outline" className="border-blue-500 text-blue-400 hover:bg-blue-500/20 text-sm">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          Directions
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gray-800/30 border-gray-700">
+                    <CardContent className="p-4">
+                      <h4 className="text-white font-semibold mb-2">Manipal Hospital Recovery</h4>
+                      <p className="text-gray-400 text-sm mb-2">📍 456 Brigade Road, Bangalore</p>
+                      <div className="flex items-center space-x-4 text-sm text-gray-300 mb-3">
+                        <span>⭐ 4.6</span>
+                        <span>⏰ 8 AM - 8 PM</span>
+                        <span>📏 1.2 km</span>
+                      </div>
+                      <div className="flex space-x-2 mb-3">
+                        <Badge variant="outline" className="text-cyan-400 border-cyan-400 text-xs">Outpatient Care</Badge>
+                        <Badge variant="outline" className="text-green-400 border-green-400 text-xs">Counselling</Badge>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button className="bg-green-500 hover:bg-green-600 text-white text-sm">
+                          <Phone className="w-3 h-3 mr-1" />
+                          Call Now
+                        </Button>
+                        <Button variant="outline" className="border-blue-500 text-blue-400 hover:bg-blue-500/20 text-sm">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          Directions
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gray-800/30 border-gray-700">
+                    <CardContent className="p-4">
+                      <h4 className="text-white font-semibold mb-2">NIMHANS De-addiction Unit</h4>
+                      <p className="text-gray-400 text-sm mb-2">📍 789 Hosur Road, Bangalore</p>
+                      <div className="flex items-center space-x-4 text-sm text-gray-300 mb-3">
+                        <span>⭐ 4.9</span>
+                        <span>⏰ 24/7</span>
+                        <span>📏 1.5 km</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button className="bg-green-500 hover:bg-green-600 text-white text-sm">
+                          <Phone className="w-3 h-3 mr-1" />
+                          Call Now
+                        </Button>
+                        <Button variant="outline" className="border-blue-500 text-blue-400 hover:bg-blue-500/20 text-sm">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          Directions
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </CardContent>
             </Card>
 
-            {/* Schedule Appointment */}
-            <Card className="glass-card">
+            {/* Emergency Support */}
+            <Card className="glass-card animate-fade-in">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold flex items-center space-x-2">
-                  <Calendar className="w-5 h-5 text-green-400" />
-                  <span>Schedule Appointment</span>
-                </CardTitle>
+                <CardTitle className="text-xl font-semibold text-red-400">Emergency Support</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-300">
-                  Book appointments with your preferred doctors and manage your schedule.
-                </p>
-                <Button variant="secondary" className="mt-4 w-full">
-                  Book Now
+              <CardContent className="space-y-4">
+                <Button className="w-full bg-red-500 hover:bg-red-600 text-white">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Crisis Helpline - 9152987821
                 </Button>
+                <Button variant="outline" className="w-full border-blue-500 text-blue-400 hover:bg-blue-500/20">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Emergency Services - 102
+                </Button>
+                <Button variant="outline" className="w-full border-purple-500 text-purple-400 hover:bg-purple-500/20">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Mental Health Helpline
+                </Button>
+                
+                <div className="text-yellow-400 text-sm p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                  ⚠️ If you're in immediate danger, call 102. For mental health crisis support, call the helpline numbers above.
+                </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Appointment Form */}
-          <Card className="glass-card animate-fade-in">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold">
-                New Appointment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="appointmentDate" className="text-gray-300">
-                    Date
-                  </Label>
-                  <Input
-                    type="date"
-                    id="appointmentDate"
-                    className="bg-transparent text-white"
-                    value={appointmentDate}
-                    onChange={(e) => setAppointmentDate(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="appointmentTime" className="text-gray-300">
-                    Time
-                  </Label>
-                  <Input
-                    type="time"
-                    id="appointmentTime"
-                    className="bg-transparent text-white"
-                    value={appointmentTime}
-                    onChange={(e) => setAppointmentTime(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="location" className="text-gray-300">
-                    Location
-                  </Label>
-                  <Input
-                    type="text"
-                    id="location"
-                    className="bg-transparent text-white"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Hospital, Clinic, or Online"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="doctorName" className="text-gray-300">
-                    Doctor's Name
-                  </Label>
-                  <Input
-                    type="text"
-                    id="doctorName"
-                    className="bg-transparent text-white"
-                    value={doctorName}
-                    onChange={(e) => setDoctorName(e.target.value)}
-                    placeholder="Dr. Smith"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="notes" className="text-gray-300">
-                    Notes
-                  </Label>
-                  <Textarea
-                    id="notes"
-                    className="bg-transparent text-white"
-                    placeholder="Add any relevant information for the appointment"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Schedule Now
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Resources and Information */}
-          <Card className="glass-card animate-fade-in">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold">
-                Helpful Resources
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                <p className="text-blue-300 text-sm">
-                  <a href="#" className="hover:underline">
-                    Understanding Nicotine Addiction
-                  </a>
-                </p>
-              </div>
-              <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                <p className="text-green-300 text-sm">
-                  <a href="#" className="hover:underline">
-                    Coping Strategies for Withdrawal Symptoms
-                  </a>
-                </p>
-              </div>
-              <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                <p className="text-purple-300 text-sm">
-                  <a href="#" className="hover:underline">
-                    Finding Support Groups in Your Community
-                  </a>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

@@ -39,164 +39,136 @@ const Support = () => {
       </div>
 
       <div className="relative z-10 p-4">
-        <div className="max-w-4xl mx-auto py-12">
-          <Card className="glass-card animate-fade-in">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-serif text-white mb-2 text-glow animate-fade-in">
+              Support Community 🤝
+            </h1>
+            <p className="text-cyan-300 text-lg opacity-80 animate-fade-in">
+              You're not alone in this journey
+            </p>
+          </div>
+
+          {/* Daily Check-in Chat */}
+          <Card className="glass-card mb-8 animate-fade-in">
             <CardHeader>
-              <CardTitle className="text-2xl font-semibold text-white">
-                We're here to support you 💙
+              <CardTitle className="text-xl font-semibold text-white flex items-center">
+                <MessageCircle className="w-5 h-5 mr-3 text-cyan-400" />
+                Daily Check-in Chat
               </CardTitle>
+              <p className="text-cyan-300 text-sm opacity-80">AI-moderated support space</p>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid gap-4">
-                {/* Support Channels */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <Card className="glass-card p-4 hover:scale-105 transition-transform duration-200">
-                    <CardContent className="flex items-center space-x-4 p-0">
-                      <MessageCircle className="text-cyan-400 w-6 h-6" />
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">Chat with us</h3>
-                        <p className="text-sm text-gray-400">Available 24/7</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="glass-card p-4 hover:scale-105 transition-transform duration-200">
-                    <CardContent className="flex items-center space-x-4 p-0">
-                      <Phone className="text-blue-400 w-6 h-6" />
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">Call our hotline</h3>
-                        <p className="text-sm text-gray-400">Mon-Fri, 9am-5pm</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="glass-card p-4 hover:scale-105 transition-transform duration-200">
-                    <CardContent className="flex items-center space-x-4 p-0">
-                      <Video className="text-purple-400 w-6 h-6" />
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">Video consultation</h3>
-                        <p className="text-sm text-gray-400">Book an appointment</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="glass-card p-4 hover:scale-105 transition-transform duration-200">
-                    <CardContent className="flex items-center space-x-4 p-0">
-                      <Users className="text-green-400 w-6 h-6" />
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">Join our community</h3>
-                        <p className="text-sm text-gray-400">Share your journey</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Contact Form */}
-                <div className="mb-6">
-                  <h4 className="text-xl font-semibold text-white mb-4">
-                    Or send us a message:
-                  </h4>
-                  <form onSubmit={handleSubmit} className="grid gap-4">
-                    <div>
-                      <Label htmlFor="name" className="text-gray-300">
-                        Your Name
-                      </Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Enter your name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="bg-black/50 border-gray-700 text-white"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email" className="text-gray-300">
-                        Your Email
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="bg-black/50 border-gray-700 text-white"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="message" className="text-gray-300">
-                        Your Message
-                      </Label>
-                      <Textarea
-                        id="message"
-                        placeholder="Tell us how we can help"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        rows={4}
-                        className="bg-black/50 border-gray-700 text-white resize-none"
-                        required
-                      />
-                    </div>
-                    <Button type="submit" disabled={submitted}>
-                      {submitted ? 'Sending...' : 'Send Message'}
-                    </Button>
-                  </form>
-                </div>
-
-                {/* Success Message */}
-                {submitted && (
-                  <div className="text-green-500">
-                    Message sent successfully! We'll get back to you soon.
-                  </div>
-                )}
-
-                {/* Testimonials */}
-                <div>
-                  <h4 className="text-xl font-semibold text-white mb-4">
-                    What others are saying:
-                  </h4>
-                  <div className="space-y-4">
-                    <Card className="glass-card p-4">
-                      <CardContent className="p-0">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Star className="text-gray-400 w-4 h-4" />
-                        </div>
-                        <p className="text-gray-300 text-sm">
-                          "This app has been a lifesaver. The support team is
-                          amazing and always ready to help."
-                        </p>
-                        <p className="text-gray-400 text-xs mt-2">
-                          - Alex M.
-                        </p>
-                      </CardContent>
-                    </Card>
-
-                    <Card className="glass-card p-4">
-                      <CardContent className="p-0">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Heart className="text-red-400 w-4 h-4" />
-                          <Heart className="text-red-400 w-4 h-4" />
-                        </div>
-                        <p className="text-gray-300 text-sm">
-                          "I've never felt so supported in my recovery journey.
-                          Thank you for everything!"
-                        </p>
-                        <p className="text-gray-400 text-xs mt-2">
-                          - Jordan L.
-                        </p>
-                      </CardContent>
-                    </Card>
+            <CardContent>
+              {/* Chat messages */}
+              <div className="space-y-4 mb-4 max-h-64 overflow-y-auto">
+                <div className="flex justify-end">
+                  <div className="bg-cyan-500/20 text-cyan-100 p-3 rounded-lg max-w-xs">
+                    <p className="text-sm">Feeling really tempted today...</p>
+                    <p className="text-xs text-cyan-300 mt-1">2:30 PM</p>
                   </div>
                 </div>
+                <div className="flex justify-start">
+                  <div className="bg-gray-700/50 text-gray-100 p-3 rounded-lg max-w-xs">
+                    <p className="text-sm">I understand that feeling. You've already come so far - 12 days is amazing! Remember your breathing exercise?</p>
+                    <p className="text-xs text-gray-400 mt-1">2:31 PM</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Chat input */}
+              <div className="flex space-x-2">
+                <Input
+                  placeholder="Share how you're feeling..."
+                  className="bg-black/50 border-gray-700 text-white flex-1"
+                />
+                <Button className="bg-cyan-500 hover:bg-cyan-600">
+                  Send
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Community Members */}
+            <Card className="glass-card animate-fade-in">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-white flex items-center">
+                  <Users className="w-5 h-5 mr-3 text-green-400" />
+                  Community Members
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <div>
+                    <p className="text-white font-medium">Sarah M.</p>
+                    <p className="text-gray-400 text-sm">45 days smoke-free</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <div>
+                    <p className="text-white font-medium">Mike R.</p>
+                    <p className="text-gray-400 text-sm">23 days smoke-free</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <div>
+                    <p className="text-white font-medium">Emma L.</p>
+                    <p className="text-gray-400 text-sm">67 days smoke-free</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <div>
+                    <p className="text-white font-medium">David K.</p>
+                    <p className="text-gray-400 text-sm">15 days smoke-free</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Daily Motivation */}
+            <Card className="glass-card animate-fade-in">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-white">Daily Motivation</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center">
+                  <p className="text-cyan-300 text-lg italic mb-4">
+                    "Every day you don't smoke adds 2 hours to your life on average."
+                  </p>
+                  <Badge variant="outline" className="text-cyan-400 border-cyan-400">
+                    Health Fact
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Emergency Support */}
+          <Card className="glass-card mt-8 animate-fade-in">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-white text-red-400">Emergency Support</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button className="w-full bg-red-500 hover:bg-red-600 text-white">
+                <Phone className="w-4 h-4 mr-2" />
+                Crisis Helpline - 9152987821
+              </Button>
+              <Button variant="outline" className="w-full border-blue-500 text-blue-400 hover:bg-blue-500/20">
+                <Phone className="w-4 h-4 mr-2" />
+                Emergency Services - 102
+              </Button>
+              <Button variant="outline" className="w-full border-purple-500 text-purple-400 hover:bg-purple-500/20">
+                <Phone className="w-4 h-4 mr-2" />
+                Mental Health Helpline
+              </Button>
+              
+              <div className="text-center text-yellow-400 text-sm mt-4">
+                ⚠️ If you're in immediate danger, call 102. For mental health crisis support, call the helpline numbers above.
               </div>
             </CardContent>
           </Card>
