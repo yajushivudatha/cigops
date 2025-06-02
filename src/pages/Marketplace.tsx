@@ -12,8 +12,7 @@ const Marketplace = () => {
     { id: 'wellness', name: 'Wellness', emoji: '🧘‍♀️' },
     { id: 'nutrition', name: 'Nutrition', emoji: '🥗' },
     { id: 'habits', name: 'Habit Tools', emoji: '📝' },
-    { id: 'comfort', name: 'Comfort', emoji: '☕' },
-    { id: 'nrt', name: 'NRT Products', emoji: '🏥' }
+    { id: 'comfort', name: 'Comfort', emoji: '☕' }
   ];
 
   const products = [
@@ -82,39 +81,6 @@ const Marketplace = () => {
       description: "Celebrate your achievements with these treats",
       bestFor: "Milestones",
       reviews: 234
-    },
-    {
-      id: 7,
-      name: "Nicotine Gum - 2mg (120 pieces)",
-      price: 39.99,
-      rating: 4.5,
-      category: 'nrt',
-      image: '🟢',
-      description: "FDA-approved nicotine replacement therapy for light smokers",
-      bestFor: "Week 1-12",
-      reviews: 892
-    },
-    {
-      id: 8,
-      name: "Nicotine Gum - 4mg (120 pieces)",
-      price: 42.99,
-      rating: 4.6,
-      category: 'nrt',
-      image: '🔴',
-      description: "FDA-approved nicotine replacement therapy for heavy smokers",
-      bestFor: "Week 1-12",
-      reviews: 1024
-    },
-    {
-      id: 9,
-      name: "Sugar-Free Nicotine Gum Variety Pack",
-      price: 35.99,
-      rating: 4.4,
-      category: 'nrt',
-      image: '🌈',
-      description: "Mixed flavors - mint, fruit, cinnamon (2mg strength)",
-      bestFor: "Week 1-8",
-      reviews: 456
     }
   ];
 
@@ -123,7 +89,7 @@ const Marketplace = () => {
     : products.filter(p => p.category === selectedCategory);
 
   return (
-    <div className="min-h-screen p-4 pt-20 bg-black overflow-y-auto">
+    <div className="min-h-screen p-4 pt-20">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">

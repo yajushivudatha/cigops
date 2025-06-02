@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Upload, FileText, Zap, AlertCircle, Download } from 'lucide-react';
+import { Upload, FileText, Zap, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PDFAnalyzer = () => {
@@ -9,50 +10,6 @@ const PDFAnalyzer = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzedReport, setAnalyzedReport] = useState<any>(null);
   const { toast } = useToast();
-
-  const sampleReports = {
-    xray: {
-      type: 'Chest X-Ray',
-      findings: 'Mild bilateral lower lobe opacity consistent with smoking-related inflammation. No acute consolidation or pneumothorax.',
-      recommendation: 'Significant improvement expected within 2-3 months of smoking cessation. Follow-up recommended in 6 weeks.',
-      severity: 'Moderate',
-      details: 'Heart size normal. Lung fields show increased markings in lower zones. No pleural effusion.',
-      sampleData: {
-        lungOpacity: '15%',
-        heartSize: 'Normal (CTR: 0.45)',
-        pleuralSpaces: 'Clear',
-        boneStructures: 'Intact'
-      }
-    },
-    bloodTest: {
-      type: 'Blood Test - Nicotine Levels',
-      findings: 'Cotinine level: 15 ng/mL (Normal: <3 ng/mL for non-smokers). Elevated inflammatory markers (CRP: 8.2 mg/L).',
-      recommendation: 'Cotinine levels will normalize within 7-10 days after quitting. Inflammatory markers should improve within 2-4 weeks.',
-      severity: 'High',
-      details: 'Complete blood count normal. Liver function tests within normal limits.',
-      sampleData: {
-        cotinine: '15 ng/mL',
-        crp: '8.2 mg/L',
-        wbc: '7,200/μL',
-        hemoglobin: '14.2 g/dL',
-        platelets: '285,000/μL'
-      }
-    },
-    lungFunction: {
-      type: 'Lung Function Test (Spirometry)',
-      findings: 'FEV1: 78% predicted (Normal: >80%). FEV1/FVC ratio: 0.65 (Normal: >0.70). Mild airway obstruction.',
-      recommendation: 'Lung function can improve by 5-10% within first year of quitting smoking. Consider pulmonary rehabilitation.',
-      severity: 'Moderate',
-      details: 'Peak flow: 420 L/min (85% predicted). Response to bronchodilator: 8% improvement.',
-      sampleData: {
-        fev1: '78% predicted',
-        fvc: '92% predicted',
-        fev1fvc: '0.65',
-        peakFlow: '420 L/min',
-        bronchodilatorResponse: '8% improvement'
-      }
-    }
-  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -100,8 +57,12 @@ const PDFAnalyzer = () => {
 
     // Simulate analysis
     setTimeout(() => {
-      const randomReport = Object.values(sampleReports)[Math.floor(Math.random() * 3)];
-      setAnalyzedReport(randomReport);
+      setAnalyzedReport({
+        type: 'Chest X-Ray',
+        findings: 'Mild inflammation in lower lobes',
+        recommendation: 'Significant improvement expected within 3 months of quitting',
+        severity: 'Moderate'
+      });
       setIsAnalyzing(false);
       
       toast({
@@ -119,24 +80,6 @@ const PDFAnalyzer = () => {
     input.click();
   };
 
-  const handleSampleReport = (reportType: keyof typeof sampleReports) => {
-    setIsAnalyzing(true);
-    toast({
-      title: "Loading sample report",
-      description: `Analyzing sample ${reportType.replace(/([A-Z])/g, ' $1').toLowerCase()}...`
-    });
-
-    setTimeout(() => {
-      setAnalyzedReport(sampleReports[reportType]);
-      setIsAnalyzing(false);
-      
-      toast({
-        title: "Sample analysis complete",
-        description: "Sample report has been analyzed."
-      });
-    }, 2000);
-  };
-
   const handleSaveToTimeline = () => {
     console.log('Saving to health timeline...');
     toast({
@@ -145,15 +88,8 @@ const PDFAnalyzer = () => {
     });
   };
 
-  const handleDownloadReport = () => {
-    toast({
-      title: "Download started",
-      description: "Your analysis report is being downloaded."
-    });
-  };
-
   return (
-    <div className="min-h-screen p-4 pt-20 bg-black overflow-y-auto">
+    <div className="min-h-screen p-4 pt-20">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
@@ -199,7 +135,7 @@ const PDFAnalyzer = () => {
                 </div>
 
                 <Button 
-                  className="bg-cyan-500 hover:bg-cyan-600 mb-4"
+                  className="bg-cyan-500 hover:bg-cyan-600"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleChooseFile();
@@ -210,43 +146,19 @@ const PDFAnalyzer = () => {
                 </Button>
               </div>
 
-              {/* Sample Reports */}
-              <div className="mt-6">
-                <h4 className="text-white mb-4">Your Reports:</h4>
-                <div className="grid grid-cols-1 gap-3">
-                  <Button
-                    onClick={() => handleSampleReport('xray')}
-                    variant="outline"
-                    className="bg-blue-500/20 border-blue-500/50 text-blue-300 hover:bg-blue-500/30 justify-start"
-                  >
-                    <div className="text-2xl mr-3">🫁</div>
-                    <div className="text-left">
-                      <div className="font-semibold">Chest X-Ray</div>
-                      <div className="text-xs opacity-80">Smoking-related lung changes</div>
-                    </div>
-                  </Button>
-                  <Button
-                    onClick={() => handleSampleReport('bloodTest')}
-                    variant="outline"
-                    className="bg-red-500/20 border-red-500/50 text-red-300 hover:bg-red-500/30 justify-start"
-                  >
-                    <div className="text-2xl mr-3">🩸</div>
-                    <div className="text-left">
-                      <div className="font-semibold">Blood Test</div>
-                      <div className="text-xs opacity-80">Nicotine & inflammatory markers</div>
-                    </div>
-                  </Button>
-                  <Button
-                    onClick={() => handleSampleReport('lungFunction')}
-                    variant="outline"
-                    className="bg-green-500/20 border-green-500/50 text-green-300 hover:bg-green-500/30 justify-start"
-                  >
-                    <div className="text-2xl mr-3">💨</div>
-                    <div className="text-left">
-                      <div className="font-semibold">Lung Function</div>
-                      <div className="text-xs opacity-80">Spirometry results</div>
-                    </div>
-                  </Button>
+              {/* Supported Formats */}
+              <div className="mt-6 grid grid-cols-3 gap-4 text-center">
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-2xl mb-2">🫁</div>
+                  <p className="text-sm text-gray-300">Chest X-rays</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-2xl mb-2">🩸</div>
+                  <p className="text-sm text-gray-300">Blood Tests</p>
+                </div>
+                <div className="p-3 bg-white/5 rounded-lg">
+                  <div className="text-2xl mb-2">💨</div>
+                  <p className="text-sm text-gray-300">Lung Function</p>
                 </div>
               </div>
             </CardContent>
@@ -262,7 +174,7 @@ const PDFAnalyzer = () => {
 
               {isAnalyzing ? (
                 <div className="text-center py-12">
-                  <div className="w-24 h-24 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                  <div className="w-24 h-24 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
                     <Zap className="w-12 h-12 text-cyan-400 animate-pulse" />
                   </div>
                   <h4 className="text-xl text-white mb-2">Analyzing...</h4>
@@ -278,33 +190,13 @@ const PDFAnalyzer = () => {
                     <p className="text-white">{analyzedReport.type}</p>
                   </div>
 
-                  {/* Sample Data Section */}
-                  {analyzedReport.sampleData && (
-                    <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                      <h4 className="text-purple-300 font-semibold mb-3">Data Values</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {Object.entries(analyzedReport.sampleData).map(([key, value]) => (
-                          <div key={key} className="flex justify-between items-center p-2 bg-black/30 rounded">
-                            <span className="text-gray-300 capitalize text-sm">
-                              {key.replace(/([A-Z])/g, ' $1')}:
-                            </span>
-                            <span className="text-white font-medium text-sm">{String(value)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Findings */}
                   <div className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
                     <h4 className="text-orange-300 font-semibold mb-2 flex items-center">
                       <AlertCircle className="w-4 h-4 mr-2" />
                       Key Findings
                     </h4>
-                    <p className="text-white mb-2">{analyzedReport.findings}</p>
-                    {analyzedReport.details && (
-                      <p className="text-gray-300 text-sm">{analyzedReport.details}</p>
-                    )}
+                    <p className="text-white">{analyzedReport.findings}</p>
                   </div>
 
                   {/* Recommendation */}
@@ -320,32 +212,20 @@ const PDFAnalyzer = () => {
                       px-3 py-1 rounded-full text-sm font-medium
                       ${analyzedReport.severity === 'Moderate' 
                         ? 'bg-yellow-500/20 text-yellow-300' 
-                        : analyzedReport.severity === 'High'
-                        ? 'bg-red-500/20 text-red-300'
-                        : 'bg-green-500/20 text-green-300'
+                        : 'bg-red-500/20 text-red-300'
                       }
                     `}>
                       {analyzedReport.severity}
                     </span>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <Button 
-                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500"
-                      onClick={handleSaveToTimeline}
-                    >
-                      Save to Health Timeline
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      className="border-green-400 text-green-400 hover:bg-green-400 hover:text-black"
-                      onClick={handleDownloadReport}
-                    >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Report
-                    </Button>
-                  </div>
+                  {/* Action Button */}
+                  <Button 
+                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500"
+                    onClick={handleSaveToTimeline}
+                  >
+                    Save to Health Timeline
+                  </Button>
                 </div>
               ) : (
                 <div className="text-center py-12">
@@ -354,7 +234,7 @@ const PDFAnalyzer = () => {
                   </div>
                   <h4 className="text-xl text-gray-300 mb-2">Ready to Analyze</h4>
                   <p className="text-gray-400">
-                    Upload a medical report or try a sample to see AI-powered insights about your recovery journey
+                    Upload a medical report to see AI-powered insights about your recovery journey
                   </p>
                 </div>
               )}

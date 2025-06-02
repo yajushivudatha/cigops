@@ -1,177 +1,242 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Phone, Video, Users, Heart, Star } from 'lucide-react';
+import { MessageCircle, Users, Heart, Send } from 'lucide-react';
 
 const Support = () => {
   const [message, setMessage] = useState('');
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simulate form submission
-    console.log('Form submitted', { name, email, message });
-    setSubmitted(true);
-    // Reset form after submission
-    setName('');
-    setEmail('');
+  const [isWatsonMode, setIsWatsonMode] = useState(false);
+  const [messages, setMessages] = useState([
+    { type: 'user', text: "Feeling really tempted today...", time: "2:30 PM" },
+    { type: 'ai', text: "I understand that feeling. You've already come so far - 12 days is amazing! Remember your breathing exercise?", time: "2:31 PM" },
+    { type: 'community', text: "You've got this! Day 12 was tough for me too, but it gets easier. 💪", author: "Sarah M.", time: "2:35 PM" },
+    { type: 'ai', text: "Sarah's right. Your brain is rewiring itself. Each craving resisted makes you stronger. Want to try a 2-minute breathing session?", time: "2:36 PM" }
+  ]);
+  
+  const generateWatsonResponse = (userInput: string): string => {
+    const input = userInput.toLowerCase();
+    
+    if (input.includes('nicotine') && (input.includes('patch') || input.includes('gum') || input.includes('replacement'))) {
+      return "Nicotine replacement therapy (NRT) can be very effective. For patches: Start with 21mg if you smoke 10+ cigarettes daily, 14mg for lighter smokers. Apply to clean, dry skin on upper body, rotate location daily. Use for 6-8 weeks, then step down to 14mg, then 7mg. For gum: Use 4mg if you smoke within 30 minutes of waking, otherwise 2mg. Chew slowly until you taste nicotine, then park between cheek and gum. Would you like specific guidance based on your smoking habits?";
+    }
+    
+    if (input.includes('treatment') || input.includes('rehab')) {
+      return "Based on clinical evidence, effective addiction treatment typically includes a combination of medical detox, behavioral therapy, and long-term support. I can help you find local treatment centers that offer these evidence-based approaches. Would you like me to search for facilities in your area?";
+    }
+    
+    if (input.includes('withdrawal') || input.includes('detox')) {
+      return "Withdrawal symptoms are a normal part of recovery. Common symptoms include irritability, anxiety, difficulty concentrating, and cravings. These typically peak within 72 hours and gradually improve over 2-4 weeks. Nicotine replacement therapy can reduce these symptoms by 50-70%. Stay hydrated, get rest, and use coping strategies. Are you experiencing specific withdrawal symptoms?";
+    }
+    
+    if (input.includes('craving') || input.includes('urge')) {
+      return "Cravings are intense but temporary - they typically last 3-5 minutes. Evidence-based strategies: Use the '4 D's' - Delay (wait 10 minutes), Deep breathe (try the 4-7-8 technique), Drink water, Do something else. The app's breathing exercises are excellent for this. Physical activity, calling support contacts, or nicotine gum can also help. How long have you been smoke-free?";
+    }
+    
+    if (input.includes('help') || input.includes('emergency') || input.includes('crisis')) {
+      return "If you're in immediate crisis, please call 9152987821 (Crisis Helpline) or 102 (Emergency Services). For non-emergency support, I can provide evidence-based strategies, help you understand nicotine replacement options, or discuss treatment approaches. What specific support do you need right now?";
+    }
+    
+    return "I'm here to provide evidence-based support for your recovery journey. I can help with nicotine replacement therapy guidance, withdrawal management, treatment options, or coping strategies. What would you like to know more about?";
+  };
+  
+  const handleSendMessage = () => {
+    if (!message.trim()) return;
+    
+    const newMessage = {
+      type: 'user',
+      text: message,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    
+    setMessages(prev => [...prev, newMessage]);
     setMessage('');
-    // Optionally, reset the submitted state after a delay
-    setTimeout(() => setSubmitted(false), 3000);
+    
+    // Use Watson AI if in Watson mode, otherwise use regular AI
+    setTimeout(() => {
+      const aiResponse = {
+        type: isWatsonMode ? 'watson' : 'ai',
+        text: isWatsonMode ? generateWatsonResponse(newMessage.text) : "I hear you. Those feelings are completely normal in recovery. What specific situation is triggering this feeling right now?",
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, aiResponse]);
+    }, 1000);
   };
 
-  return (
-    <div className="min-h-screen bg-black relative overflow-y-auto pb-16">
-      {/* Breathing Bubbles Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-cyan-500/20 rounded-full animate-breathe"></div>
-        <div className="absolute top-1/3 right-32 w-24 h-24 bg-blue-500/15 rounded-full animate-breathe" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-purple-500/10 rounded-full animate-breathe" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-28 h-28 bg-teal-500/15 rounded-full animate-breathe" style={{ animationDelay: '3s' }}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-36 h-36 bg-indigo-500/10 rounded-full animate-breathe" style={{ animationDelay: '0.5s' }}></div>
-      </div>
+  const handleEmergencySupport = () => {
+    window.open('tel:9152987821');
+  };
 
-      <div className="relative z-10 p-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-serif text-white mb-2 text-glow animate-fade-in">
-              Support Community 🤝
-            </h1>
-            <p className="text-cyan-300 text-lg opacity-80 animate-fade-in">
-              You're not alone in this journey
-            </p>
+  const handleAICoach = () => {
+    setIsWatsonMode(true);
+    const watsonMessage = {
+      type: 'watson',
+      text: "Hello! I'm Watson, your AI clinical support assistant. I can help you find treatment options, understand addiction recovery, and provide evidence-based guidance including nicotine replacement therapy. How can I assist you today?",
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    setMessages(prev => [...prev, watsonMessage]);
+  };
+
+  const communityMembers = [
+    { name: "Sarah M.", days: 45, status: "online", avatar: "🌟" },
+    { name: "Mike R.", days: 23, status: "online", avatar: "💪" },
+    { name: "Emma L.", days: 67, status: "away", avatar: "🌸" },
+    { name: "David K.", days: 15, status: "online", avatar: "🎯" }
+  ];
+
+  return (
+    <div className="min-h-screen p-4 pt-20">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12 animate-fade-in">
+          <h1 className="text-4xl font-serif text-white mb-4 text-glow">
+            Support Community 🤝
+          </h1>
+          <p className="text-cyan-300 text-lg opacity-80">
+            You're not alone in this journey
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Chat Section */}
+          <div className="lg:col-span-2">
+            <Card className="glass-card h-96 animate-scale-in">
+              <CardContent className="p-0 h-full flex flex-col">
+                {/* Chat Header */}
+                <div className="p-4 border-b border-white/10">
+                  <h3 className="text-xl font-semibold text-white flex items-center">
+                    <MessageCircle className="w-5 h-5 mr-2 text-cyan-400" />
+                    Daily Check-in Chat {isWatsonMode && <span className="ml-2 text-sm bg-blue-500/20 px-2 py-1 rounded">Watson AI Active</span>}
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    {isWatsonMode ? "Watson AI clinical support mode" : "AI-moderated support space"}
+                  </p>
+                </div>
+
+                {/* Messages */}
+                <div className="flex-1 p-4 overflow-y-auto space-y-4">
+                  {messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`
+                        flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}
+                        animate-slide-up
+                      `}
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <div className={`
+                        max-w-xs p-3 rounded-lg
+                        ${msg.type === 'user' 
+                          ? 'bg-cyan-500 text-white' 
+                          : msg.type === 'watson'
+                          ? 'bg-blue-500/20 text-blue-100 border border-blue-500/30'
+                          : msg.type === 'ai'
+                          ? 'bg-purple-500/20 text-purple-100 border border-purple-500/30'
+                          : 'bg-green-500/20 text-green-100 border border-green-500/30'
+                        }
+                      `}>
+                        {msg.author && (
+                          <p className="text-xs opacity-70 mb-1">{msg.author}</p>
+                        )}
+                        <p className="text-sm">{msg.text}</p>
+                        <p className="text-xs opacity-60 mt-1">{msg.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Message Input */}
+                <div className="p-4 border-t border-white/10">
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      placeholder={isWatsonMode ? "Ask Watson about nicotine patches, treatment options..." : "Share how you're feeling..."}
+                      className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+                    />
+                    <Button
+                      onClick={handleSendMessage}
+                      size="sm"
+                      className="bg-cyan-500 hover:bg-cyan-600"
+                    >
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Support Actions */}
+            <div className="mt-6 grid grid-cols-2 gap-4">
+              <Button
+                onClick={handleEmergencySupport}
+                variant="outline"
+                className="glass-card border-white/20 hover:border-red-400/50 hover:bg-red-500/10 h-16"
+              >
+                <Heart className="w-5 h-5 mr-2 text-red-400" />
+                <span>Emergency Support</span>
+              </Button>
+              <Button
+                onClick={handleAICoach}
+                variant="outline"
+                className="glass-card border-white/20 hover:border-blue-400/50 hover:bg-blue-500/10 h-16"
+              >
+                <MessageCircle className="w-5 h-5 mr-2 text-blue-400" />
+                <span>Talk to AI Coach</span>
+              </Button>
+            </div>
           </div>
 
-          {/* Daily Check-in Chat */}
-          <Card className="glass-card mb-8 animate-fade-in">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-white flex items-center">
-                <MessageCircle className="w-5 h-5 mr-3 text-cyan-400" />
-                Daily Check-in Chat
-              </CardTitle>
-              <p className="text-cyan-300 text-sm opacity-80">AI-moderated support space</p>
-            </CardHeader>
-            <CardContent>
-              {/* Chat messages */}
-              <div className="space-y-4 mb-4 max-h-64 overflow-y-auto">
-                <div className="flex justify-end">
-                  <div className="bg-cyan-500/20 text-cyan-100 p-3 rounded-lg max-w-xs">
-                    <p className="text-sm">Feeling really tempted today...</p>
-                    <p className="text-xs text-cyan-300 mt-1">2:30 PM</p>
-                  </div>
-                </div>
-                <div className="flex justify-start">
-                  <div className="bg-gray-700/50 text-gray-100 p-3 rounded-lg max-w-xs">
-                    <p className="text-sm">I understand that feeling. You've already come so far - 12 days is amazing! Remember your breathing exercise?</p>
-                    <p className="text-xs text-gray-400 mt-1">2:31 PM</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Chat input */}
-              <div className="flex space-x-2">
-                <Input
-                  placeholder="Share how you're feeling..."
-                  className="bg-black/50 border-gray-700 text-white flex-1"
-                />
-                <Button className="bg-cyan-500 hover:bg-cyan-600">
-                  Send
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* Sidebar */}
+          <div className="space-y-6">
             {/* Community Members */}
-            <Card className="glass-card animate-fade-in">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-white flex items-center">
-                  <Users className="w-5 h-5 mr-3 text-green-400" />
+            <Card className="glass-card p-6 animate-scale-in">
+              <CardContent className="p-0">
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-green-400" />
                   Community Members
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <div>
-                    <p className="text-white font-medium">Sarah M.</p>
-                    <p className="text-gray-400 text-sm">45 days smoke-free</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <div>
-                    <p className="text-white font-medium">Mike R.</p>
-                    <p className="text-gray-400 text-sm">23 days smoke-free</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <div>
-                    <p className="text-white font-medium">Emma L.</p>
-                    <p className="text-gray-400 text-sm">67 days smoke-free</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <div>
-                    <p className="text-white font-medium">David K.</p>
-                    <p className="text-gray-400 text-sm">15 days smoke-free</p>
-                  </div>
+                </h3>
+                
+                <div className="space-y-3">
+                  {communityMembers.map((member, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-white/5 transition-colors"
+                    >
+                      <div className="text-2xl">{member.avatar}</div>
+                      <div className="flex-1">
+                        <p className="text-white font-medium">{member.name}</p>
+                        <p className="text-xs text-gray-400">{member.days} days smoke-free</p>
+                      </div>
+                      <div className={`
+                        w-2 h-2 rounded-full
+                        ${member.status === 'online' ? 'bg-green-400' : 'bg-gray-400'}
+                      `}></div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
 
             {/* Daily Motivation */}
-            <Card className="glass-card animate-fade-in">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-white">Daily Motivation</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center">
-                  <p className="text-cyan-300 text-lg italic mb-4">
-                    "Every day you don't smoke adds 2 hours to your life on average."
+            <Card className="glass-card p-6 animate-scale-in">
+              <CardContent className="p-0">
+                <h3 className="text-xl font-semibold text-white mb-4">Daily Motivation</h3>
+                <blockquote className="text-cyan-300 italic mb-3">
+                  "Every person who quits smoking adds 14 years to their life on average."
+                </blockquote>
+                <cite className="text-sm text-gray-400">— Health Research</cite>
+                
+                <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <p className="text-green-300 text-sm">
+                    🎉 Community milestone: 1,247 total days smoke-free!
                   </p>
-                  <Badge variant="outline" className="text-cyan-400 border-cyan-400">
-                    Health Fact
-                  </Badge>
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Emergency Support */}
-          <Card className="glass-card mt-8 animate-fade-in">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-white text-red-400">Emergency Support</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button className="w-full bg-red-500 hover:bg-red-600 text-white">
-                <Phone className="w-4 h-4 mr-2" />
-                Crisis Helpline - 9152987821
-              </Button>
-              <Button variant="outline" className="w-full border-blue-500 text-blue-400 hover:bg-blue-500/20">
-                <Phone className="w-4 h-4 mr-2" />
-                Emergency Services - 102
-              </Button>
-              <Button variant="outline" className="w-full border-purple-500 text-purple-400 hover:bg-purple-500/20">
-                <Phone className="w-4 h-4 mr-2" />
-                Mental Health Helpline
-              </Button>
-              
-              <div className="text-center text-yellow-400 text-sm mt-4">
-                ⚠️ If you're in immediate danger, call 102. For mental health crisis support, call the helpline numbers above.
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

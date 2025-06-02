@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 interface VoiceSupportConfig {
@@ -15,21 +15,9 @@ export const useVoiceSupport = () => {
     voiceId: '2WM58lWaTXuuBkN1puHx'
   });
   const { toast } = useToast();
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  const stopCurrentAudio = () => {
-    if (currentAudioRef.current) {
-      currentAudioRef.current.pause();
-      currentAudioRef.current.currentTime = 0;
-      currentAudioRef.current = null;
-    }
-  };
 
   const speak = async (text: string) => {
     if (!config) return;
-
-    // Stop any currently playing audio
-    stopCurrentAudio();
 
     try {
       const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${config.voiceId}`, {
@@ -43,8 +31,8 @@ export const useVoiceSupport = () => {
           text: text,
           model_id: 'eleven_multilingual_v2',
           voice_settings: {
-            stability: 0.7,
-            similarity_boost: 0.8
+            stability: 0.5,
+            similarity_boost: 0.5
           }
         })
       });
@@ -54,15 +42,10 @@ export const useVoiceSupport = () => {
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         
-        currentAudioRef.current = audio;
-        
         audio.play();
         
         audio.onended = () => {
           URL.revokeObjectURL(audioUrl);
-          if (currentAudioRef.current === audio) {
-            currentAudioRef.current = null;
-          }
         };
       }
     } catch (error) {
@@ -89,9 +72,6 @@ export const useVoiceSupport = () => {
       
       const voiceText = `Hello Alex. I'm here to help you through this moment. ${contextMessage} Let's take this one breath at a time. You've got this.`;
       
-      // Stop any currently playing audio
-      stopCurrentAudio();
-
       const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${config.voiceId}`, {
         method: 'POST',
         headers: {
@@ -103,8 +83,8 @@ export const useVoiceSupport = () => {
           text: voiceText,
           model_id: 'eleven_multilingual_v2',
           voice_settings: {
-            stability: 0.7,
-            similarity_boost: 0.8
+            stability: 0.5,
+            similarity_boost: 0.5
           }
         })
       });
@@ -113,8 +93,6 @@ export const useVoiceSupport = () => {
         const audioBlob = await response.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
-        
-        currentAudioRef.current = audio;
         
         audio.play();
         
@@ -126,9 +104,6 @@ export const useVoiceSupport = () => {
         audio.onended = () => {
           setIsConnected(false);
           URL.revokeObjectURL(audioUrl);
-          if (currentAudioRef.current === audio) {
-            currentAudioRef.current = null;
-          }
         };
       } else {
         throw new Error('Failed to generate voice');
@@ -144,7 +119,6 @@ export const useVoiceSupport = () => {
   };
 
   const endVoiceSession = () => {
-    stopCurrentAudio();
     setIsConnected(false);
     toast({
       title: "Session Ended",
@@ -158,7 +132,6 @@ export const useVoiceSupport = () => {
     speak,
     initializeVoiceSupport,
     startVoiceSession,
-    endVoiceSession,
-    stopCurrentAudio
+    endVoiceSession
   };
 };
