@@ -75,7 +75,7 @@ const CalmNow = () => {
     // Speak the instruction
     speak(currentPhaseData.instruction);
 
-    // Start countdown
+    // Start countdown timer - counting down from duration to 1
     let timeLeft = currentPhaseData.duration;
     intervalRef.current = setInterval(() => {
       timeLeft--;
@@ -174,8 +174,8 @@ const CalmNow = () => {
                   <div className="text-sm text-cyan-300 mb-2">
                     {breathingPhase}
                   </div>
-                  <div className="text-4xl font-bold text-white mb-4">
-                    {countdown}
+                  <div className="text-6xl font-bold text-white mb-4">
+                    {countdown > 0 ? countdown : ''}
                   </div>
                   <div className="space-x-2">
                     <Button
